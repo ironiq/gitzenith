@@ -10,7 +10,7 @@ services:
 
   php-fpm:
     volumes:
-      - /var/www:/var/repositories
+      - /var/www/gitrepos:/var/repositories
       - .:/application:cached
       - var-cache-volume:/application/var/cache
       - $HOME/.composer:/root/.composer/:cached

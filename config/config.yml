@@ -19,13 +19,13 @@ parameters:
       target: https://github.com/ironiq/gitlist-fork/issues
 
   # List of directories containing repositories
-  default_repository_dir: /var/www
+  default_repository_dir: /var/www/gitrepos
   repositories:
     - '%env(default:default_repository_dir:DEFAULT_REPOSITORY_DIR)%'
 
   # List of repositories to exclude
   exclude_repositories:
-    - /var/example/gitlist
+    - /var/www/gitrepos/gitlist_exclude
 
   # How many levels should be recursively traversed looking for repositories
   repository_depth: '0'
