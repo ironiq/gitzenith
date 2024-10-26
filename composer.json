@@ -12,7 +12,7 @@
     "nesbot/carbon": "^3.8",
     "symfony/asset": "^6.4",
     "symfony/cache": "^6.4",
-    "symfony/clock": "6.4",
+    "symfony/clock": "^6.4",
     "symfony/console": "^6.4",
     "symfony/form": "^6.4",
     "symfony/framework-bundle": "^6.4",
