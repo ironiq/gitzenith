@@ -28,7 +28,8 @@ In order to run GitList on your server, you'll need:
 * Webserver (Apache, nginx)
 
 ## Installation
-* Download the [latest release](https://github.com/klaussilveira/gitlist/releases) or the [nightly build](https://github.com/klaussilveira/gitlist/releases/download/nightly/gitlist-nightly.zip) and decompress to your `/var/www/gitlist` folder, or anywhere else you want to place GitList.
+
+* Download the [latest release](https://github.com/ironiq/gitlist-fork/releases) and decompress to your `/var/www/gitlist` folder, or anywhere else you want to place GitList.
   * Do not use the source release, or download a branch or tag from GitHub. It is not suited for end-users, only development.
 * Open up the `config/config.yml` and configure your installation. You'll have to provide where your repositories are located.
   * Alternatively, you can export the environment variable `DEFAULT_REPOSITORY_DIR` with the directory containing your repositories
@@ -44,7 +45,7 @@ chmod 777 var/log
 
 * Point your webserver to the `/var/www/gitlist/public` folder, where `index.php` is.
 
-That's it, installation complete! If you're having problems, check the [Troubleshooting](https://github.com/klaussilveira/gitlist/wiki/Troubleshooting) page.
+That's it, installation complete! If you're having problems, check the [Troubleshooting](https://github.com/ironiq/gitlist-fork/docs/Troubleshooting.md) page.
 
 ## Development
 GitList comes with a Docker Compose configuration intended for development purposes. It contains a PHP image with all necessary extensions, as well as a Node image for frontend assets.
@@ -52,7 +53,7 @@ GitList comes with a Docker Compose configuration intended for development purpo
 To get started, just clone the repo and run the setup script:
 
 ```bash
-git clone https://github.com/klaussilveira/gitlist.git
+git clone https://github.com/ironiq/gitlist-fork.git
 make setup
 ```
 
@@ -75,10 +76,8 @@ If you are a developer, we need your help. GitList is small, but we have lots of
 * Stay tuned to possible bugs, suboptimal code, duplicated code, overcomplicated expressions and unused code
 * Improve the test coverage by creating unit and functional tests
 
-If you are not a developer, you can also contribute by helping [translate GitList](https://crowdin.com/project/gitlist).
-
 ## Further information
-If you want to know more about customizing GitList, check the [Customization](https://github.com/klaussilveira/gitlist/wiki/Customizing) page on the wiki. Also, if you're having problems with GitList, check the [Troubleshooting](https://github.com/klaussilveira/gitlist/wiki/Troubleshooting) page. Don't forget to report issues and suggest new features! :)
+If you want to know more about customizing GitList, check the [Customization](https://github.com/ironiq/gitlist-fork/docs/Customizing.md) page on the wiki. Also, if you're having problems with GitList, check the [Troubleshooting](https://github.com/ironiq/gitlist-fork/docs/Troubleshooting.md) page. Don't forget to report issues and suggest new features! :)
 
 ## Legacy
 GitList was born in [May 2012](https://github.com/klaussilveira/gitlist/commit/df43c987cf02a3521ac65cf5bd4a4f54cf749177), a time were Composer was still a novelty and Silex was all the rage. We have tried to maintain GitList as-is for as long as possible, but the PHP ecosystem changed so much in all those years that it became too time consuming to maintain it. Thus, `2.0` was born on top of Symfony 6 and we'll keep moving with the times.
