@@ -30,7 +30,8 @@
 
   .tab-content {
     max-height: 200px;
-    overflow: scroll;
+    // overflow: scroll;
+    overflow: auto;
   }
 }
 
