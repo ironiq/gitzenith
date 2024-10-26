@@ -1,8 +1,4 @@
 # GitList: an elegant git repository viewer
-![Build Status](https://github.com/klaussilveira/gitlist/actions/workflows/build.yml/badge.svg)
-[![GitHub release](https://img.shields.io/github/release/klaussilveira/gitlist.svg)](https://github.com/klaussilveira/gitlist/releases/latest)
-[![License](https://img.shields.io/github/license/klaussilveira/gitlist)](https://github.com/klaussilveira/gitlist/blob/master/LICENSE)
-[![Crowdin](https://badges.crowdin.net/gitlist/localized.svg)](https://crowdin.com/project/gitlist)
 
 GitList is an elegant and modern web interface for interacting with multiple git repositories. It allows you to browse repositories using your favorite browser, viewing files under different revisions, commit history, diffs. It also generates RSS/Atom feeds for each repository, allowing you to stay up-to-date with the latest changes anytime, anywhere. GitList was written in PHP, on top of the [Symfony](https://symfony.com) framework and powered by the Twig template engine. This means that GitList is easy to install and easy to customize. Also, the GitList interface was made possible due to [Bootstrap](https://getbootstrap.com).
 
