@@ -3,6 +3,8 @@ public/assets/
 var/
 vendor/
 node_modules/
+tmp/
+*.sw?
 .env
 docker-compose.override.yml
 npm-debug.log
