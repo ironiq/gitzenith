@@ -2,7 +2,7 @@
 .DEFAULT_GOAL := help
 NAME := gitlist
 VERSION := $(shell git show -s --format=%h)
-EXEC_DOCKER ?= docker-compose exec -T
+EXEC_DOCKER ?= docker compose exec -T
 EXEC_PHP ?= $(EXEC_DOCKER) php-fpm
 EXEC_NODE ?= $(EXEC_DOCKER) node
 EXEC_WEB ?= $(EXEC_DOCKER) web
@@ -15,27 +15,27 @@ help: # Display the application manual
 	@grep -E '^[a-zA-Z_-]+:.*?# .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?# "}; {printf "  \033[32m%-20s\033[0m %s\n", $$1, $$2}'
 
 check-deps: check-local-overrides
-	@if ! [ -x "$$(command -v docker-compose)" ]; then\
-	  echo -e '\n\033[0;31mdocker-compose is not installed.';\
+	@if ! docker compose --help >/dev/null; then\
+	  echo '\n\033[0;31mdocker compose is not installed.';\
 	  exit 1;\
 	else\
-	  echo -e "\033[0;32mdocker-compose installed\033[0m";\
+	  echo "\033[0;32mdocker compose installed\033[0m";\
 	fi
 
 setup: check-deps # Setup dependencies and development configuration
-	@docker-compose pull || true
-	@docker-compose up -d --build
+	@docker compose pull || true
+	@docker compose up -d --build
 	$(EXEC_PHP) composer install
 
 up: # Create and start containers
-	@docker-compose up -d
+	@docker compose up -d
 
 clean: # Cleanup containers and build artifacts
-	@docker-compose down
+	@docker compose down
 	$(MAKE) setup
 
 bash: # Start a bash session in the PHP container
-	@docker-compose exec php-fpm /bin/bash
+	@docker compose exec php-fpm /bin/bash
 
 test: # Run automated test suite
 	$(EXEC_PHP) composer test
