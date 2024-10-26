@@ -22,7 +22,7 @@ jobs:
 
       - name: Cache Composer packages
         id: composer-cache
-        uses: actions/setup-php@v2
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
           path: vendor
@@ -46,14 +46,20 @@ jobs:
         run: composer run-script stan
 
   frontend:
-    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [18]
+
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.5.1
         with:
-          node-version: '18'
+          node-version: ${{ matrix.node-version }}
 
       - name: Install frontend dependencies
         run: npm install
@@ -62,16 +68,24 @@ jobs:
         run: npm test
 
   acceptance:
-    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        php: [8.2, 8.3]
+        node-version: [18]
+
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Cache Composer packages
         id: composer-cache
-        uses: actions/cache@v2
+        uses: shivammathur/setup-php@v2
         with:
           path: vendor
+          php-version: ${{ matrix.php }}
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-
@@ -79,7 +93,7 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.5.1
         with:
-          node-version: '18'
+          node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress && npm install
@@ -104,7 +118,7 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.5.1
         with:
-          node-version: '18'
+          node-version: ${{ matrix.node-version }}
 
       - name: Install frontend dependencies
         run: npm install
