@@ -45,7 +45,7 @@ chmod 777 var/log
 
 * Point your webserver to the `/var/www/gitlist/public` folder, where `index.php` is.
 
-That's it, installation complete! If you're having problems, check the [Troubleshooting](https://github.com/ironiq/gitlist-fork/docs/Troubleshooting.md) page.
+That's it, installation complete! If you're having problems, check the [Troubleshooting](https://github.com/ironiq/gitlist-fork/blob/main/docs/Troubleshooting.md) page.
 
 ## Development
 GitList comes with a Docker Compose configuration intended for development purposes. It contains a PHP image with all necessary extensions, as well as a Node image for frontend assets.
@@ -77,7 +77,7 @@ If you are a developer, we need your help. GitList is small, but we have lots of
 * Improve the test coverage by creating unit and functional tests
 
 ## Further information
-If you want to know more about customizing GitList, check the [Customization](https://github.com/ironiq/gitlist-fork/docs/Customizing.md) page on the wiki. Also, if you're having problems with GitList, check the [Troubleshooting](https://github.com/ironiq/gitlist-fork/docs/Troubleshooting.md) page. Don't forget to report issues and suggest new features! :)
+If you want to know more about customizing GitList, check the [Customization](https://github.com/ironiq/gitlist-fork/blob/main/docs/Customizing.md) page on the wiki. Also, if you're having problems with GitList, check the [Troubleshooting](https://github.com/ironiq/gitlist-fork/blob/main/docs/Troubleshooting.md) page. Don't forget to report issues and suggest new features! :)
 
 ## Legacy
 GitList was born in [May 2012](https://github.com/klaussilveira/gitlist/commit/df43c987cf02a3521ac65cf5bd4a4f54cf749177), a time were Composer was still a novelty and Silex was all the rage. We have tried to maintain GitList as-is for as long as possible, but the PHP ecosystem changed so much in all those years that it became too time consuming to maintain it. Thus, `2.0` was born on top of Symfony 6 and we'll keep moving with the times.
