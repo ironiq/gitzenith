@@ -61,6 +61,7 @@ build: # Build application package
 	@zip ./build.zip \
 	-r * .[^.]* \
 	-x '.github/*' \
+	-x 'assets/*' \
 	-x 'bin/*' \
 	-x 'docker/*' \
 	-x 'node_modules/*' \
@@ -79,6 +80,8 @@ build: # Build application package
 	-x '.prettierrc' \
 	-x 'composer.json' \
 	-x 'composer.lock' \
+	-x 'crowdin.yml' \
+	-x 'cypress.yml' \
 	-x 'docker-compose.override.yml' \
 	-x 'docker-compose.override.yml.dist' \
 	-x 'docker-compose.yml' \
