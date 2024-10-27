@@ -1,6 +1,6 @@
 .PHONY: help
 .DEFAULT_GOAL := help
-NAME := gitlist
+NAME := gitlist-fork
 VERSION := $(shell git show -s --format=%h)
 EXEC_DOCKER ?= docker compose exec -T
 EXEC_PHP ?= $(EXEC_DOCKER) php-fpm
