@@ -1,7 +1,7 @@
 # GitList configuration
 parameters:
   # Web application title
-  title: GitRepos
+  title: GitZenith
 
   # Locale configuration
   locale: en
@@ -13,10 +13,10 @@ parameters:
   navigation:
     -
       label: Help
-      target: https://github.com/ironiq/gitlist-fork
+      target: https://github.com/ironiq/gitzenith
     -
       label: Report an Issue
-      target: https://github.com/ironiq/gitlist-fork/issues
+      target: https://github.com/ironiq/gitzenith/issues
 
   # List of directories containing repositories
   default_repository_dir: /var/www/gitrepos
@@ -25,7 +25,7 @@ parameters:
 
   # List of repositories to exclude
   exclude_repositories:
-    - /var/www/gitrepos/gitlist_exclude
+    - /var/www/gitrepos/gitzenith_exclude
 
   # How many levels should be recursively traversed looking for repositories
   repository_depth: '0'

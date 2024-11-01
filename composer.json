@@ -1,7 +1,7 @@
 {
-  "name": "klaussilveira/gitlist",
+  "name": "ironiq/gitzenith",
   "description": "An elegant git repository viewer",
-  "keywords": ["scm", "vcs", "git", "repository", "github", "gitweb"],
+  "keywords": ["scm", "vcs", "git", "repository", "gitweb"],
   "type": "project",
   "license": "BSD-3-Clause",
   "require": {
