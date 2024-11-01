@@ -9,8 +9,9 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-[*.{js,html,twig,yaml}]
+[*.{js,html,twig,yaml,scss}]
 indent_size = 2
+indent_style = space
 
 [*.{php}]
 indent_style = tab
