@@ -11,8 +11,6 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         node-version: [18]
-    env:
-      REPONAME: ${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}
     runs-on: ${{ matrix.os }}
     steps:
       - name: Set ENV variables
