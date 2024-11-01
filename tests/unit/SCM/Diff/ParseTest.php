@@ -89,7 +89,7 @@ DIFF;
 		$this->assertEquals( 23, $firstHunk->getNewStart() );
 		$this->assertEquals( 6, $firstHunk->getNewCount() );
 		$this->assertEquals( '@@ -23,7 +23,6 @@', $firstHunk->getContents() );
-		$this->assertCount( 8, $firstHunk->getLines() );
+		$this->assertCount( 7, $firstHunk->getLines() );
 
 		// Line 1
 		$this->assertEquals( ' #  define DEBUG', $firstHunk->getLines()[0]->getContents() );
@@ -113,7 +113,7 @@ DIFF;
 
 		// Line 5
 		$this->assertEquals( '', $firstHunk->getLines()[4]->getContents() );
-		$this->assertEquals( Line::TYPE_NO_CHANGE, $firstHunk->getLines()[4]->getType() );
+		$this->assertEquals( Line::TYPE_NO_CHANGE, $firstHunk->getLines()[2]->getType() );
 
 		// Line 6
 		$this->assertEquals( ' #include <linux/memblock.h>', $firstHunk->getLines()[5]->getContents() );

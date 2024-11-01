@@ -137,10 +137,9 @@ class Parse
 		}
 		else
 		{
-			$this->currentHunk->addLine( new Line( $line, Line::TYPE_ADD, $oldNumber, $newNumber ) );
+			$this->currentHunk->addLine( new Line( $line, Line::TYPE_DELETE, $oldNumber, $newNumber ) );
 		}
 
-		$this->currentHunk->addLine( new Line( $line, Line::TYPE_DELETE, $oldNumber, $newNumber ) );
 		$this->currentFile->increaseDeletions();
 		++$this->deletedLines;
 	}
@@ -150,7 +149,15 @@ class Parse
 		$oldNumber = $this->oldCounter;
 		$newNumber = $this->newCounter + $this->addedLines;
 
-		$this->currentHunk->addLine( new Line( $line, Line::TYPE_ADD, $oldNumber, $newNumber ) );
+		if( null == $this->currentHunk )
+		{
+			$this->hunk( $line, $context );
+		}
+		else
+		{
+			$this->currentHunk->addLine( new Line( $line, Line::TYPE_ADD, $oldNumber, $newNumber ) );
+		}
+
 		$this->currentFile->increaseAdditions();
 		++$this->addedLines;
 	}
