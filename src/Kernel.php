@@ -18,56 +18,56 @@ use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
 
 class Kernel extends BaseKernel
 {
-    use MicroKernelTrait;
+	use MicroKernelTrait;
 
-    public function getProjectDir(): string
-    {
-        return __DIR__.'/../';
-    }
+	public function getProjectDir(): string
+	{
+		return __DIR__.'/../';
+	}
 
-    public function getCacheDir(): string
-    {
-        return $this->getProjectDir().'/var/cache/'.$this->environment;
-    }
+	public function getCacheDir(): string
+	{
+		return $this->getProjectDir().'/var/cache/'.$this->environment;
+	}
 
-    public function getLogDir(): string
-    {
-        return $this->getProjectDir().'/var/log';
-    }
+	public function getLogDir(): string
+	{
+		return $this->getProjectDir().'/var/log';
+	}
 
-    public function registerBundles(): iterable
-    {
-        $bundles = [
-            FrameworkBundle::class,
-            TwigBundle::class,
-            MonologBundle::class,
-            WebpackEncoreBundle::class,
-        ];
+	public function registerBundles(): iterable
+	{
+		$bundles = [
+			FrameworkBundle::class,
+			TwigBundle::class,
+			MonologBundle::class,
+			WebpackEncoreBundle::class,
+		];
 
-        if ($this->debug) {
-            $bundles[] = DebugBundle::class;
-        }
+		if ( $this->debug ) {
+			$bundles[] = DebugBundle::class;
+		}
 
-        foreach ($bundles as $bundle) {
-            yield new $bundle();
-        }
-    }
+		foreach ( $bundles as $bundle ) {
+			yield new $bundle();
+		}
+	}
 
-    private function configureContainer(ContainerConfigurator $container, LoaderInterface $loader, ContainerBuilder $builder): void
-    {
-        $confDir = $this->getProjectDir().'/config';
-        $loader->load($confDir.'/config.yml');
-        $loader->load($confDir.'/framework.yml');
-        $loader->load($confDir.'/services.yml');
-    }
+	private function configureContainer( ContainerConfigurator $container, LoaderInterface $loader, ContainerBuilder $builder ): void
+	{
+		$confDir = $this->getProjectDir().'/config';
+		$loader->load( $confDir.'/config.yml' );
+		$loader->load( $confDir.'/framework.yml' );
+		$loader->load( $confDir.'/services.yml' );
+	}
 
-    private function configureRoutes(RoutingConfigurator $routes): void
-    {
-        $confDir = $this->getProjectDir().'/config';
-        $routes->import($confDir.'/routes.yml');
+	private function configureRoutes( RoutingConfigurator $routes ): void
+	{
+		$confDir = $this->getProjectDir().'/config';
+		$routes->import( $confDir.'/routes.yml' );
 
-        if ('dev' == $this->environment) {
-            $routes->import($confDir.'/dev/routes.yml');
-        }
-    }
+		if ( 'dev' == $this->environment ) {
+			$routes->import( $confDir.'/dev/routes.yml' );
+		}
+	}
 }

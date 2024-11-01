@@ -6,34 +6,34 @@ namespace GitZenith\SCM;
 
 class Blame
 {
-    protected Repository $repository;
+	protected Repository $repository;
 
-    /**
-     * @var AnnotatedLine[]
-     */
-    protected array $annotatedLines = [];
+	/**
+	 * @var AnnotatedLine[]
+	 */
+	protected array $annotatedLines = [];
 
-    public function __construct(protected string $path, protected string $hash)
-    {
-    }
+	public function __construct( protected string $path, protected string $hash )
+	{
+	}
 
-    public function getPath(): string
-    {
-        return $this->path;
-    }
+	public function getPath(): string
+	{
+		return $this->path;
+	}
 
-    public function getHash(): string
-    {
-        return $this->hash;
-    }
+	public function getHash(): string
+	{
+		return $this->hash;
+	}
 
-    public function getAnnotatedLines(): array
-    {
-        return $this->annotatedLines;
-    }
+	public function getAnnotatedLines(): array
+	{
+		return $this->annotatedLines;
+	}
 
-    public function addAnnotatedLine(AnnotatedLine $annotatedLine): void
-    {
-        $this->annotatedLines[] = $annotatedLine;
-    }
+	public function addAnnotatedLine( AnnotatedLine $annotatedLine ): void
+	{
+		$this->annotatedLines[] = $annotatedLine;
+	}
 }

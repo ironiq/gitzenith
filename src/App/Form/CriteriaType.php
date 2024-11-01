@@ -14,30 +14,30 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CriteriaType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
-    {
-        $builder
-            ->add('from', DateTimeType::class, [
-                'widget' => 'single_text',
-                'required' => false,
-            ])
-            ->add('to', DateTimeType::class, [
-                'widget' => 'single_text',
-                'required' => false,
-            ])
-            ->add('author', TextType::class, [
-                'required' => false,
-            ])
-            ->add('message', TextType::class, [
-                'required' => false,
-            ])
-            ->add('submit', SubmitType::class);
-    }
+	public function buildForm( FormBuilderInterface $builder, array $options ): void
+	{
+		$builder
+			->add( 'from', DateTimeType::class, [
+				'widget' => 'single_text',
+				'required' => false,
+			] )
+			->add( 'to', DateTimeType::class, [
+				'widget' => 'single_text',
+				'required' => false,
+			] )
+			->add( 'author', TextType::class, [
+				'required' => false,
+			] )
+			->add( 'message', TextType::class, [
+				'required' => false,
+			] )
+			->add( 'submit', SubmitType::class );
+	}
 
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            'data_class' => Criteria::class,
-        ]);
-    }
+	public function configureOptions( OptionsResolver $resolver ): void
+	{
+		$resolver->setDefaults( [
+			'data_class' => Criteria::class,
+		] );
+	}
 }

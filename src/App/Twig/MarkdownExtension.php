@@ -15,31 +15,31 @@ use Twig\TwigFilter;
 
 class MarkdownExtension extends AbstractExtension
 {
-    private CommonMarkConverter $converter;
+	private CommonMarkConverter $converter;
 
-    public function __construct()
-    {
-        $environment = [
-            'html_input' => 'strip',
-            'allow_unsafe_links' => false,
-        ];
+	public function __construct()
+	{
+		$environment = [
+			'html_input' => 'strip',
+			'allow_unsafe_links' => false,
+		];
 
-        $this->converter = new CommonMarkConverter($environment);
-    }
+		$this->converter = new CommonMarkConverter( $environment );
+	}
 
-    public function getFilters()
-    {
-        return [
-            new TwigFilter('markdown', [$this, 'markdown']),
-        ];
-    }
+	public function getFilters()
+	{
+		return [
+			new TwigFilter( 'markdown', [$this, 'markdown'] ),
+		];
+	}
 
-    public function markdown($string): string
-    {
-        if (!$string) {
-            return '';
-        }
+	public function markdown( $string ): string
+	{
+		if ( !$string ) {
+			return '';
+		}
 
-        return (string) $this->converter->convert($string);
-    }
+		return (string) $this->converter->convert( $string );
+	}
 }

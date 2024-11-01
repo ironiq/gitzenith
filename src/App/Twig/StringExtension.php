@@ -10,21 +10,21 @@ use Twig\TwigFilter;
 
 class StringExtension extends AbstractExtension
 {
-    public function getFilters()
-    {
-        return [
-            new TwigFilter('truncate', [$this, 'truncate']),
-        ];
-    }
+	public function getFilters()
+	{
+		return [
+			new TwigFilter( 'truncate', [$this, 'truncate'] ),
+		];
+	}
 
-    public function truncate($string, int $maxLength = 30, string $terminator = '', bool $cut = true): string
-    {
-        if (!$string) {
-            return '';
-        }
+	public function truncate( $string, int $maxLength = 30, string $terminator = '', bool $cut = true ): string
+	{
+		if ( !$string ) {
+			return '';
+		}
 
-        return (new UnicodeString($string))
-            ->truncate($maxLength, $terminator, $cut)
-            ->toString();
-    }
+		return ( new UnicodeString( $string ) )
+			->truncate( $maxLength, $terminator, $cut )
+			->toString();
+	}
 }

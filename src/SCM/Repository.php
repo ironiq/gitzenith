@@ -6,12 +6,12 @@ namespace GitZenith\SCM;
 
 class Repository
 {
-    public function __construct(protected string $path)
-    {
-    }
+	public function __construct( protected string $path )
+	{
+	}
 
-    public function getPath(): string
-    {
-        return $this->path;
-    }
+	public function getPath(): string
+	{
+		return $this->path;
+	}
 }

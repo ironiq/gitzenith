@@ -6,15 +6,15 @@ namespace GitZenith\SCM;
 
 class Symlink extends Blob
 {
-    protected string $target;
+	protected string $target;
 
-    public function getTarget(): string
-    {
-        return $this->target;
-    }
+	public function getTarget(): string
+	{
+		return $this->target;
+	}
 
-    public function setTarget(string $target): void
-    {
-        $this->target = $target;
-    }
+	public function setTarget( string $target ): void
+	{
+		$this->target = $target;
+	}
 }
