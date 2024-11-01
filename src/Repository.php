@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace GitList;
+namespace GitZenith;
 
-use GitList\Exception\BlobNotFoundException;
-use GitList\Repository\Commitish;
-use GitList\SCM\AnnotatedLine;
-use GitList\SCM\Blame;
-use GitList\SCM\Blob;
-use GitList\SCM\Commit;
-use GitList\SCM\Commit\Criteria;
-use GitList\SCM\Exception\CommandException;
-use GitList\SCM\Repository as SourceRepository;
-use GitList\SCM\System;
-use GitList\SCM\Tree;
+use GitZenith\Exception\BlobNotFoundException;
+use GitZenith\Repository\Commitish;
+use GitZenith\SCM\AnnotatedLine;
+use GitZenith\SCM\Blame;
+use GitZenith\SCM\Blob;
+use GitZenith\SCM\Commit;
+use GitZenith\SCM\Commit\Criteria;
+use GitZenith\SCM\Exception\CommandException;
+use GitZenith\SCM\Repository as SourceRepository;
+use GitZenith\SCM\System;
+use GitZenith\SCM\Tree;
 
 class Repository
 {

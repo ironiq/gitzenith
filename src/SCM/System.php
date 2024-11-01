@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GitList\SCM;
+namespace GitZenith\SCM;
 
-use GitList\SCM\Commit\Criteria;
+use GitZenith\SCM\Commit\Criteria;
 
 interface System
 {

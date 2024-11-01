@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GitList\App\Twig;
+namespace GitZenith\App\Twig;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;

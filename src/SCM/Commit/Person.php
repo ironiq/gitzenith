@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GitList\SCM\Commit;
+namespace GitZenith\SCM\Commit;
 
 class Person
 {

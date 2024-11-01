@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace GitList\App\Controller;
+namespace GitZenith\App\Controller;
 
-use GitList\Repository\Index;
-use GitList\SCM\File;
+use GitZenith\Repository\Index;
+use GitZenith\SCM\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;

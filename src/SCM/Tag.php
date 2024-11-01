@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace GitList\SCM;
+namespace GitZenith\SCM;
 
 use Carbon\CarbonInterface;
-use GitList\SCM\Commit\Person;
+use GitZenith\SCM\Commit\Person;
 
 class Tag
 {

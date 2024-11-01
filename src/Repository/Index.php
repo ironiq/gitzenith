@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace GitList\Repository;
+namespace GitZenith\Repository;
 
-use GitList\Exception\InvalidRepositoryException;
-use GitList\Exception\RepositoryNotFoundException;
-use GitList\Repository;
-use GitList\SCM\Repository as SourceRepository;
-use GitList\SCM\System;
+use GitZenith\Exception\InvalidRepositoryException;
+use GitZenith\Exception\RepositoryNotFoundException;
+use GitZenith\Repository;
+use GitZenith\SCM\Repository as SourceRepository;
+use GitZenith\SCM\System;
 use Symfony\Component\Finder\Finder;
 
 class Index

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GitList\SCM\Diff;
+namespace GitZenith\SCM\Diff;
 
 class Parse
 {

@@ -1,36 +1,36 @@
 # Web application
 repository_list:
   path: /
-  controller: GitList\App\Controller\Repository::list
+  controller: GitZenith\App\Controller\Repository::list
 
 repository_show:
   path: /{repository}
-  controller: GitList\App\Controller\Repository::show
+  controller: GitZenith\App\Controller\Repository::show
   requirements:
     repository: '%valid_repository_name%'
 
 repository_tree:
   path: /{repository}/tree/{commitish}
-  controller: GitList\App\Controller\Repository::showTree
+  controller: GitZenith\App\Controller\Repository::showTree
   requirements:
     repository: '%valid_repository_name%'
     commitish: '%valid_commitish_format%'
 
 repository_list_branches:
   path: /{repository}/branches
-  controller: GitList\App\Controller\Repository::listBranches
+  controller: GitZenith\App\Controller\Repository::listBranches
   requirements:
     repository: '%valid_repository_name%'
 
 repository_list_tags:
   path: /{repository}/tags
-  controller: GitList\App\Controller\Repository::listTags
+  controller: GitZenith\App\Controller\Repository::listTags
   requirements:
     repository: '%valid_repository_name%'
 
 repository_feed:
   path: /{repository}/feed/{commitish}.{format}
-  controller: GitList\App\Controller\Commit::feed
+  controller: GitZenith\App\Controller\Commit::feed
   requirements:
     repository: '%valid_repository_name%'
     commitish: '%valid_commitish_format%'
@@ -38,7 +38,7 @@ repository_feed:
 
 repository_archive:
   path: /{repository}/archive/{commitish}.{format}
-  controller: GitList\App\Controller\Repository::archive
+  controller: GitZenith\App\Controller\Repository::archive
   requirements:
     repository: '%valid_repository_name%'
     commitish: '%valid_commitish_format%'
@@ -47,7 +47,7 @@ repository_archive:
 repository_search_commits:
   path: /{repository}/search/commits/{commitish}
   methods: [GET]
-  controller: GitList\App\Controller\CommitSearch::createForm
+  controller: GitZenith\App\Controller\CommitSearch::createForm
   requirements:
     repository: '%valid_repository_name%'
     commitish: '%valid_commitish_format%'
@@ -55,49 +55,49 @@ repository_search_commits:
 repository_search_commits_action:
   path: /{repository}/search/commits/{commitish}
   methods: [POST]
-  controller: GitList\App\Controller\CommitSearch::showResults
+  controller: GitZenith\App\Controller\CommitSearch::showResults
   requirements:
     repository: '%valid_repository_name%'
     commitish: '%valid_commitish_format%'
 
 blob_show:
   path: /{repository}/blob/{commitish}
-  controller: GitList\App\Controller\Blob::show
+  controller: GitZenith\App\Controller\Blob::show
   requirements:
     repository: '%valid_repository_name%'
     commitish: '%valid_commitish_format%'
 
 blob_raw:
   path: /{repository}/raw/{commitish}
-  controller: GitList\App\Controller\Blob::showRaw
+  controller: GitZenith\App\Controller\Blob::showRaw
   requirements:
     repository: '%valid_repository_name%'
     commitish: '%valid_commitish_format%'
 
 blob_blame:
   path: /{repository}/blame/{commitish}
-  controller: GitList\App\Controller\Blob::blame
+  controller: GitZenith\App\Controller\Blob::blame
   requirements:
     repository: '%valid_repository_name%'
     commitish: '%valid_commitish_format%'
 
 blob_history:
   path: /{repository}/history/{commitish}
-  controller: GitList\App\Controller\Blob::showHistory
+  controller: GitZenith\App\Controller\Blob::showHistory
   requirements:
     repository: '%valid_repository_name%'
     commitish: '%valid_commitish_format%'
 
 commit_list:
   path: /{repository}/commits/{commitish}
-  controller: GitList\App\Controller\Commit::list
+  controller: GitZenith\App\Controller\Commit::list
   requirements:
     repository: '%valid_repository_name%'
     commitish: '%valid_commitish_format%'
 
 commit_show:
   path: /{repository}/commit/{commitish}
-  controller: GitList\App\Controller\Commit::show
+  controller: GitZenith\App\Controller\Commit::show
   requirements:
     repository: '%valid_repository_name%'
     commitish: '%valid_commitish_format%'

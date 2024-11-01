@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GitList\App\Form;
+namespace GitZenith\App\Form;
 
-use GitList\SCM\Commit\Criteria;
+use GitZenith\SCM\Commit\Criteria;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;

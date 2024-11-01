@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GitList\SCM;
+namespace GitZenith\SCM;
 
 class Blame
 {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace GitList\App\Twig;
+namespace GitZenith\App\Twig;
 
-use GitList\SCM\Blob;
-use GitList\SCM\Tree;
+use GitZenith\SCM\Blob;
+use GitZenith\SCM\Tree;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;

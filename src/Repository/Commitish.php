@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GitList\Repository;
+namespace GitZenith\Repository;
 
-use GitList\Repository;
+use GitZenith\Repository;
 
 class Commitish
 {

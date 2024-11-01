@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace GitList\SCM\System\Mercurial;
+namespace GitZenith\SCM\System\Mercurial;
 
 use Carbon\CarbonImmutable;
-use GitList\SCM\AnnotatedLine;
-use GitList\SCM\Blame;
-use GitList\SCM\Blob;
-use GitList\SCM\Branch;
-use GitList\SCM\Commit;
-use GitList\SCM\Commit\Criteria;
-use GitList\SCM\Commit\Person;
-use GitList\SCM\Diff\Parse;
-use GitList\SCM\Exception\CommandException;
-use GitList\SCM\Repository;
-use GitList\SCM\Symlink;
-use GitList\SCM\System;
-use GitList\SCM\Tag;
-use GitList\SCM\Tree;
+use GitZenith\SCM\AnnotatedLine;
+use GitZenith\SCM\Blame;
+use GitZenith\SCM\Blob;
+use GitZenith\SCM\Branch;
+use GitZenith\SCM\Commit;
+use GitZenith\SCM\Commit\Criteria;
+use GitZenith\SCM\Commit\Person;
+use GitZenith\SCM\Diff\Parse;
+use GitZenith\SCM\Exception\CommandException;
+use GitZenith\SCM\Repository;
+use GitZenith\SCM\Symlink;
+use GitZenith\SCM\System;
+use GitZenith\SCM\Tag;
+use GitZenith\SCM\Tree;
 use SimpleXMLElement;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\ExecutableFinder;

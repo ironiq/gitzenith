@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace GitList\App\Controller;
+namespace GitZenith\App\Controller;
 
-use GitList\Repository\Commitish;
-use GitList\Repository\Index;
+use GitZenith\Repository\Commitish;
+use GitZenith\Repository\Index;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;

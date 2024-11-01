@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GitList\Exception;
+namespace GitZenith\Exception;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

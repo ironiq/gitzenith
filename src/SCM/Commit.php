@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace GitList\SCM;
+namespace GitZenith\SCM;
 
 use Carbon\CarbonInterface;
-use GitList\SCM\Commit\Person;
-use GitList\SCM\Commit\Signature;
-use GitList\SCM\Diff\File;
+use GitZenith\SCM\Commit\Person;
+use GitZenith\SCM\Commit\Signature;
+use GitZenith\SCM\Diff\File;
 
 class Commit extends Item
 {

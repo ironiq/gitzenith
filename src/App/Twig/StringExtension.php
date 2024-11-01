@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GitList\App\Twig;
+namespace GitZenith\App\Twig;
 
 use Symfony\Component\String\UnicodeString;
 use Twig\Extension\AbstractExtension;

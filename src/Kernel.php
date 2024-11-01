@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GitList;
+namespace GitZenith;
 
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
