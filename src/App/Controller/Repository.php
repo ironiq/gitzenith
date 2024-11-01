@@ -5,8 +5,8 @@ declare( strict_types=1 );
 namespace GitZenith\App\Controller;
 
 use GitZenith\Repository\Index;
-use GitZenith\SCM\File;
 use GitZenith\SCM\Exception\CommandException;
+use GitZenith\SCM\File;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -59,6 +59,7 @@ class Repository
 			$lastCommit = false;
 			$readme = false;
 		}
+
 		return new Response( $this->templating->render( $tpl, [
 			'repository' => $repository,
 			'tree' => $tree,
