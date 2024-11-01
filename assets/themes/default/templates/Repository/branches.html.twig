@@ -16,6 +16,7 @@
         {{ 'REPOSITORY_BRANCH_TITLE'|trans }}
       </div>
       <div class="card-body">
+        {% if repository.branches|length > 0 %}
         <ul class="list-group list-group-flush">
           {% for branch in branches %}
             <li class="list-group-item">
@@ -36,6 +37,9 @@
             </li>
           {% endfor %}
         </ul>
+        {% else %}
+          {{ 'REPOSITORY_EMPTY'|trans }}
+        {% endif %}
       </div>
     </div>
   </div>

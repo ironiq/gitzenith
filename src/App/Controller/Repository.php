@@ -6,6 +6,7 @@ namespace GitZenith\App\Controller;
 
 use GitZenith\Repository\Index;
 use GitZenith\SCM\File;
+use GitZenith\SCM\Exception\CommandException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -31,17 +32,34 @@ class Repository
 	public function show( string $repository ): Response
 	{
 		$repository = $this->index->getRepository( $repository );
-		$tree = $repository->getTree();
-		$lastCommit = $repository->getCommit( $tree->getHash() );
-		$readme = $tree->getReadme();
-
-		if( $readme )
+		try
 		{
-			$blob = $repository->getBlob( $tree->getHash().'/'.$readme->getName() );
-			$readme = File::createFromBlob( $blob );
+			$tree = $repository->getTree();
 		}
+		catch ( CommandException $exception )
+		{
+			$tree = false;
+		}
+		if( $tree )
+		{
+			$lastCommit = $repository->getCommit( $tree->getHash() );
+			$readme = $tree->getReadme();
 
-		return new Response( $this->templating->render( 'Repository/show.html.twig', [
+			if( $readme )
+			{
+				$blob = $repository->getBlob( $tree->getHash().'/'.$readme->getName() );
+				$readme = File::createFromBlob( $blob );
+			}
+			$tpl = 'Repository/show.html.twig';
+		}
+		else
+		{
+			$tpl = 'Repository/empty.html.twig';
+			$tree = false;
+			$lastCommit = false;
+			$readme = false;
+		}
+		return new Response( $this->templating->render( $tpl, [
 			'repository' => $repository,
 			'tree' => $tree,
 			'lastCommit' => $lastCommit,
