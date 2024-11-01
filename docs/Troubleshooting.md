@@ -2,7 +2,7 @@ Some problems might occur when using GitZenith. Refer to this page for more info
 
 # Installation problems
 
-If you're having problems during the installation of GitZenith, make sure your PHP is correctly configured. Certain PHP distributions can have very restrictive default PHAR settings. PHAR is used within GitZenith to load [Silex](http://silex.sensiolabs.org/), a microframework. Setting the following directives on your php.ini might solve your problem:
+If you're having problems during the installation of GitZenith, make sure your PHP is correctly configured. Certain PHP distributions can have very restrictive default PHAR settings. PHAR is used within GitZenith to load [Symfony](http://symfony.com/), a PHP framework. Setting the following directives on your php.ini might solve your problem:
 
 ```
 detect_unicode = Off
@@ -25,7 +25,7 @@ WWW_DIR=/data/www/html/gitzenith
 GIT_DIR=/home/git/repositories
 sudo semanage fcontext -a -t httpd_sys_rw_content_t $WWW_DIR/cache
 sudo restorecon -v $WWW_DIR/cache
-sudo chcon -R --reference=$WWW_DIR/src/GitZenith/Git/Client.php $GIT_DIR
+sudo chcon -R --reference=$WWW_DIR/src/SCM/System/Git/CommandLine.php $GIT_DIR
 # Allow the webserver to read, home directories have stricter default rules.
 sudo semanage fcontext -a -t httpd_sys_content_t $GIT_DIR
 sudo restorecon -v $GIT_DIR
