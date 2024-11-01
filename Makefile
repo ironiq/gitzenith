@@ -65,14 +65,14 @@ build: # Build application package
 	-x 'bin/*' \
 	-x 'docker/*' \
 	-x 'node_modules/*' \
-	-x 'tests/' \
+	-x 'tests/*' \
 	-x 'var/cache/*' \
 	-x 'var/log/*' \
+	-x '.git/*' \
 	-x '.dockerignore' \
 	-x '.editorconfig' \
 	-x '.env' \
 	-x '.env.dist' \
-	-x '.git/*' \
 	-x '.gitignore'  \
 	-x '.php-cs-fixer.cache' \
 	-x '.php-cs-fixer.php' \
@@ -82,6 +82,7 @@ build: # Build application package
 	-x 'composer.lock' \
 	-x 'crowdin.yml' \
 	-x 'cypress.yml' \
+	-x 'cypress.json' \
 	-x 'docker-compose.override.yml' \
 	-x 'docker-compose.override.yml.dist' \
 	-x 'docker-compose.yml' \
@@ -91,7 +92,7 @@ build: # Build application package
 	-x 'phpstan.neon' \
 	-x 'phpunit.xml.dist' \
 	-x 'postcss.config.js' \
-	-x 'webpack.config.js' \
+	-x 'webpack.config.js'
 
 fix-perms:
 	sudo setfacl -R -m u:root:rwX -m u:`whoami`:rwX var/cache var/log vendor/
