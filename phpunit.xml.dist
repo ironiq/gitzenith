@@ -6,8 +6,7 @@
     cacheDirectory=".phpunit.cache"
     beStrictAboutOutputDuringTests="true"
     beStrictAboutCoverageMetadata="false"
-    requireCoverageMetadata="false"
-    verbose="true">
+    requireCoverageMetadata="false">
   <source>
     <include>
       <directory suffix=".php">src</directory>
