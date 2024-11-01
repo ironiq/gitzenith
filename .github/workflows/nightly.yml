@@ -8,13 +8,16 @@ on:
 jobs:
 
   release:
-    env:
-      REPONAME: ${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [18]
     steps:
+      - name: Set GITHUB_ENV variables
+        run: |
+          echo "REPONAME=$(basename ${{ github.repository }})" >> $GITHUB_ENV
+        shell: bash
+
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -30,7 +33,7 @@ jobs:
         run: make build
 
       - name: Rename package
-        run: mv build.zip $REPONAME-nightly.zip
+        run: mv build.zip ${{ env.REPONAME }}-nightly.zip
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -38,5 +41,5 @@ jobs:
           name: nightly
           tag_name: nightly
           prerelease: true
-          body: Nightly release generated from `master` at 12 AM UTC.
-          files: $REPONAME-nightly.zip
+          body: Nightly release generated from `main` at 12 AM UTC.
+          files: ${{ env.REPONAME }}-nightly.zip
