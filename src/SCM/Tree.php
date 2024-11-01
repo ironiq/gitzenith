@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith\SCM;
 
@@ -21,8 +21,10 @@ class Tree extends Item
 
 	public function removeChild( Item $childToRemove ): void
 	{
-		foreach ( $this->children as $key => $child ) {
-			if ( $child === $childToRemove ) {
+		foreach( $this->children as $key => $child )
+		{
+			if( $child === $childToRemove )
+			{
 				unset( $this->children[$key] );
 			}
 		}
@@ -83,12 +85,15 @@ class Tree extends Item
 
 	public function getReadme(): ?Blob
 	{
-		foreach ( $this->children as $child ) {
-			if ( !( $child instanceof Blob ) ) {
+		foreach( $this->children as $child )
+		{
+			if( !( $child instanceof Blob ) )
+			{
 				continue;
 			}
 
-			if ( $child->isReadme() ) {
+			if( $child->isReadme() )
+			{
 				return $child;
 			}
 		}

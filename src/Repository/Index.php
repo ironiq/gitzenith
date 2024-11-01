@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith\Repository;
 
@@ -22,7 +22,8 @@ class Index
 	{
 		$finder = new Finder();
 
-		foreach ( $paths as $path ) {
+		foreach( $paths as $path )
+		{
 			$directories = $finder
 				->directories()
 				->depth( $depth )
@@ -30,12 +31,16 @@ class Index
 				->exclude( $excludePaths )
 				->in( $path );
 
-			foreach ( $directories as $directory ) {
+			foreach( $directories as $directory )
+			{
 				$repository = new SourceRepository( $directory->getRealPath() );
 
-				try {
+				try
+				{
 					$system = $this->getSystem( $repository );
-				} catch ( InvalidRepositoryException ) {
+				}
+				catch( InvalidRepositoryException )
+				{
 					continue;
 				}
 
@@ -46,8 +51,10 @@ class Index
 
 	public function getSystem( SourceRepository $repository ): System
 	{
-		foreach ( $this->systems as $system ) {
-			if ( $system->isValidRepository( $repository ) ) {
+		foreach( $this->systems as $system )
+		{
+			if( $system->isValidRepository( $repository ) )
+			{
 				return $system;
 			}
 		}
@@ -62,7 +69,8 @@ class Index
 
 	public function getRepository( string $name ): Repository
 	{
-		if ( !isset( $this->repositories[$name] ) ) {
+		if( !isset( $this->repositories[$name] ) )
+		{
 			throw new RepositoryNotFoundException( $name );
 		}
 

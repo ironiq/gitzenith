@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith\App\Twig;
 
@@ -19,7 +19,8 @@ class StringExtension extends AbstractExtension
 
 	public function truncate( $string, int $maxLength = 30, string $terminator = '', bool $cut = true ): string
 	{
-		if ( !$string ) {
+		if ( !$string )
+		{
 			return '';
 		}
 

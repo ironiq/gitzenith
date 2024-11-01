@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith\SCM;
 
@@ -1000,9 +1000,12 @@ class File
 
 	public function __construct( protected string $name )
 	{
-		if ( false !== ( $pos = strrpos( $name, '.' ) ) ) {
+		if( false !== ( $pos = strrpos( $name, '.' ) ) )
+		{
 			$this->extension = substr( $name, $pos + 1 );
-		} else {
+		}
+		else
+		{
 			$this->extension = 'txt';
 		}
 

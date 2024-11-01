@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith\App\Controller;
 
@@ -35,7 +35,8 @@ class Repository
 		$lastCommit = $repository->getCommit( $tree->getHash() );
 		$readme = $tree->getReadme();
 
-		if ( $readme ) {
+		if( $readme )
+		{
 			$blob = $repository->getBlob( $tree->getHash().'/'.$readme->getName() );
 			$readme = File::createFromBlob( $blob );
 		}
@@ -55,7 +56,8 @@ class Repository
 		$lastCommit = $repository->getCommit( $tree->getHash() );
 		$readme = $tree->getReadme();
 
-		if ( $readme ) {
+		if( $readme )
+		{
 			$blob = $repository->getBlob( $tree->getHash().'/'.$readme->getName() );
 			$readme = File::createFromBlob( $blob );
 		}
@@ -95,7 +97,8 @@ class Repository
 		$repository = $this->index->getRepository( $repository );
 		$archive = $repository->archive( $format, $commitish );
 
-		if ( !file_exists( $archive ) ) {
+		if( !file_exists( $archive ) )
+		{
 			throw new NotFoundHttpException();
 		}
 

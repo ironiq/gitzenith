@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith\App\Twig;
 
@@ -15,34 +15,35 @@ class RepositoryExtension extends AbstractExtension
 	public function getFunctions()
 	{
 		return [
-			new TwigFunction( 'getCommitish', [$this, 'getCommitish'] ),
-			new TwigFunction( 'getParent', [$this, 'getParent'] ),
-			new TwigFunction( 'getBreadcrumbs', [$this, 'getBreadcrumbs'] ),
+			new TwigFunction( 'getCommitish', [ $this, 'getCommitish' ] ),
+			new TwigFunction( 'getParent', [ $this, 'getParent' ] ),
+			new TwigFunction( 'getBreadcrumbs', [ $this, 'getBreadcrumbs' ] ),
 		];
 	}
 
 	public function getFilters()
 	{
 		return [
-			new TwigFilter( 'formatFileSize', [$this, 'formatFileSize'] ),
-			new TwigFilter( 'onlyTrees', [$this, 'onlyTrees'] ),
-			new TwigFilter( 'onlyFiles', [$this, 'onlyFiles'] ),
+			new TwigFilter( 'formatFileSize', [ $this, 'formatFileSize' ] ),
+			new TwigFilter( 'onlyTrees', [ $this, 'onlyTrees' ] ),
+			new TwigFilter( 'onlyFiles', [ $this, 'onlyFiles' ] ),
 		];
 	}
 
 	public function onlyTrees( $items ): array
 	{
-		return array_filter( $items, [$this, 'isTree'] );
+		return array_filter( $items, [ $this, 'isTree' ] );
 	}
 
 	public function onlyFiles( $items ): array
 	{
-		return array_filter( $items, fn ( $item ) => !$this->isTree( $item ) );
+		return array_filter( $items, fn( $item ) => !$this->isTree( $item ) );
 	}
 
 	public function isTree( $value ): bool
 	{
-		if ( !$value ) {
+		if( !$value )
+		{
 			return false;
 		}
 
@@ -58,7 +59,8 @@ class RepositoryExtension extends AbstractExtension
 	{
 		$parent = dirname( $path );
 
-		if ( '.' == $parent ) {
+		if( '.' == $parent )
+		{
 			return '';
 		}
 
@@ -71,7 +73,8 @@ class RepositoryExtension extends AbstractExtension
 		$parts = explode( '/', $blob->getName() );
 		$previousPart = '';
 
-		foreach ( $parts as $index => $part ) {
+		foreach( $parts as $index => $part )
+		{
 			$previousPart .= ( 0 == $index ? '' : '/' ).$part;
 			$breadcrumbs[] = [
 				'name' => $part,
@@ -84,11 +87,12 @@ class RepositoryExtension extends AbstractExtension
 
 	public function formatFileSize( $value = null ): string
 	{
-		if ( !$value ) {
+		if( !$value )
+		{
 			return '0 B';
 		}
 
-		$units = ['B', 'KB', 'MB', 'GB', 'TB'];
+		$units = [ 'B', 'KB', 'MB', 'GB', 'TB' ];
 		$pow = floor( log( $value ) / log( 1024 ) );
 		$pow = min( $pow, count( $units ) - 1 );
 		$value /= 1024 ** $pow;

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith;
 
@@ -44,11 +44,13 @@ class Kernel extends BaseKernel
 			WebpackEncoreBundle::class,
 		];
 
-		if ( $this->debug ) {
+		if( $this->debug )
+		{
 			$bundles[] = DebugBundle::class;
 		}
 
-		foreach ( $bundles as $bundle ) {
+		foreach( $bundles as $bundle )
+		{
 			yield new $bundle();
 		}
 	}
@@ -66,7 +68,8 @@ class Kernel extends BaseKernel
 		$confDir = $this->getProjectDir().'/config';
 		$routes->import( $confDir.'/routes.yml' );
 
-		if ( 'dev' == $this->environment ) {
+		if( 'dev' == $this->environment )
+		{
 			$routes->import( $confDir.'/dev/routes.yml' );
 		}
 	}

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith\SCM;
 
@@ -146,7 +146,8 @@ class Commit extends Item
 	{
 		$additions = 0;
 
-		foreach ( $this->diffs as $diff ) {
+		foreach( $this->diffs as $diff )
+		{
 			$additions += $diff->getAdditions();
 		}
 
@@ -157,7 +158,8 @@ class Commit extends Item
 	{
 		$deletions = 0;
 
-		foreach ( $this->diffs as $diff ) {
+		foreach( $this->diffs as $diff )
+		{
 			$deletions += $diff->getDeletions();
 		}
 

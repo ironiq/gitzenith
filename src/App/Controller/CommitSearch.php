@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith\App\Controller;
 
@@ -43,8 +43,11 @@ class CommitSearch
 		$form = $this->formFactory->create( CriteriaType::class, $criteria );
 		$form->handleRequest( $request );
 
-		if ( $form->isSubmitted() && !$form->isValid() ) {
-			foreach ( $form->getErrors( true ) as $error ) {
+		if ( $form->isSubmitted() && !$form->isValid() )
+		{
+			foreach( $form->getErrors( true ) as $error )
+			{
+				/* @disregard P1013 false positive */
 				$request->getSession()->getFlashBag()->add( 'danger', $error->getMessage() );
 			}
 
@@ -58,7 +61,8 @@ class CommitSearch
 		$commits = $repository->searchCommits( $form->getData(), $commitish );
 		$commitGroups = [];
 
-		foreach ( $commits as $commit ) {
+		foreach( $commits as $commit )
+		{
 			$commitGroups[$commit->getCommitedAt()->format( 'Y-m-d' )][] = $commit;
 		}
 

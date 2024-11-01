@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith\App\Twig;
 
@@ -16,17 +16,18 @@ class AvatarExtension extends AbstractExtension
 	public function getFunctions()
 	{
 		return [
-			new TwigFunction( 'getAvatar', [$this, 'getAvatar'] ),
+			new TwigFunction( 'getAvatar', [ $this, 'getAvatar' ] ),
 		];
 	}
 
 	public function getAvatar( $email, $size = 60 ): string
 	{
-		if ( !$email ) {
+		if( !$email )
+		{
 			return '';
 		}
 
-		$queryString = array_merge( ['s' => $size], $this->avatarConfig );
+		$queryString = array_merge( [ 's' => $size ], $this->avatarConfig );
 
 		return sprintf( '%s/%s?%s', $this->avatarUrl, md5( strtolower( $email ) ), http_build_query( $queryString ) );
 	}

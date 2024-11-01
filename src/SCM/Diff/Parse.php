@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith\SCM\Diff;
 
@@ -36,13 +36,16 @@ class Parse
 		$rawLines = explode( PHP_EOL, $rawBlock );
 		$this->files = [];
 
-		foreach ( $rawLines as $rawLine ) {
+		foreach( $rawLines as $rawLine )
+		{
 			$matched = false;
 
-			foreach ( self::TOKENS as $pattern => $action ) {
+			foreach( self::TOKENS as $pattern => $action )
+			{
 				$matches = [];
 
-				if ( preg_match( $pattern, $rawLine, $matches ) ) {
+				if( preg_match( $pattern, $rawLine, $matches ) )
+				{
 					$this->$action( $rawLine, $matches );
 					$matched = true;
 
@@ -50,7 +53,8 @@ class Parse
 				}
 			}
 
-			if ( !$matched ) {
+			if( !$matched )
+			{
 				$this->line( $rawLine );
 			}
 		}
@@ -105,7 +109,8 @@ class Parse
 
 	protected function hunk( string $line, array $context ): void
 	{
-		if ( $this->currentHunk ) {
+		if( $this->currentHunk )
+		{
 			$this->currentFile->addHunk( $this->currentHunk );
 		}
 
@@ -143,7 +148,8 @@ class Parse
 
 	protected function line( string $line ): void
 	{
-		if ( !$this->currentHunk || !$this->currentFile ) {
+		if( !$this->currentHunk || !$this->currentFile )
+		{
 			return;
 		}
 
@@ -157,8 +163,10 @@ class Parse
 
 	protected function clearAccumulator(): void
 	{
-		if ( $this->currentFile ) {
-			if ( $this->currentHunk ) {
+		if( $this->currentFile )
+		{
+			if( $this->currentHunk )
+			{
 				$this->currentFile->addHunk( $this->currentHunk );
 			}
 

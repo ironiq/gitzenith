@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith\App\Controller;
 
@@ -25,7 +25,8 @@ class Commit
 		$commits = $repository->getCommits( $commitish, $page, $perPage );
 		$commitGroups = [];
 
-		foreach ( $commits as $commit ) {
+		foreach( $commits as $commit )
+		{
 			$commitGroups[$commit->getCommitedAt()->format( 'Y-m-d' )][] = $commit;
 		}
 

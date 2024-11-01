@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith\App\Twig;
 
@@ -19,13 +19,14 @@ class DateTimeExtension extends AbstractExtension
 	public function getFilters()
 	{
 		return [
-			new TwigFilter( 'ago', [$this, 'ago'] ),
+			new TwigFilter( 'ago', [ $this, 'ago' ] ),
 		];
 	}
 
 	public function ago( DateTimeInterface $date ): string
 	{
-		if ( !( $date instanceof CarbonInterface ) ) {
+		if( !( $date instanceof CarbonInterface ) )
+		{
 			$date = new Carbon( $date );
 		}
 

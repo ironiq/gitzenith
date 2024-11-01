@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith\SCM\System\Git;
 
@@ -36,7 +36,8 @@ class CommandLine implements System
 
 	public function __construct( ?string $path = null )
 	{
-		if ( !$path ) {
+		if ( !$path )
+		{
 			$path = ( new ExecutableFinder() )->find( 'git', '/usr/bin/git' );
 		}
 
@@ -54,11 +55,13 @@ class CommandLine implements System
 	{
 		$path = $repository->getPath();
 
-		if ( file_exists( $path.'/description' ) ) {
+		if ( file_exists( $path.'/description' ) )
+		{
 			return file_get_contents( $path.'/description' );
 		}
 
-		if ( file_exists( $path.'/.git/description' ) ) {
+		if ( file_exists( $path.'/.git/description' ) )
+		{
 			return file_get_contents( $path.'/.git/description' );
 		}
 
@@ -67,19 +70,21 @@ class CommandLine implements System
 
 	public function getDefaultBranch( Repository $repository ): string
 	{
-		$branch = $this->run( ['symbolic-ref', '--short', 'HEAD'], $repository );
+		$branch = $this->run( [ 'symbolic-ref', '--short', 'HEAD' ], $repository );
 
 		return trim( $branch );
 	}
 
 	public function getBranches( Repository $repository ): array
 	{
-		$output = $this->run( ['for-each-ref', 'refs/heads', '--format=%(refname:short)||%(objectname)||%(objectname:short)||%(authorname)||%(authoremail)||%(authordate)||%(subject)'], $repository );
+		$output = $this->run( [ 'for-each-ref', 'refs/heads', '--format=%(refname:short)||%(objectname)||%(objectname:short)||%(authorname)||%(authoremail)||%(authordate)||%(subject)' ], $repository );
 		$branchData = explode( PHP_EOL, $output );
 		$branches = [];
 
-		foreach ( $branchData as $branchItem ) {
-			if ( empty( $branchItem ) ) {
+		foreach( $branchData as $branchItem )
+		{
+			if( empty( $branchItem ) )
+			{
 				continue;
 			}
 
@@ -89,7 +94,8 @@ class CommandLine implements System
 			$commit->setAuthor( new Person( $branchInfo[3], trim( $branchInfo[4], '<>' ) ) );
 			$commit->setAuthoredAt( new CarbonImmutable( $branchInfo[5] ) );
 
-			if ( isset( $branchInfo[6] ) ) {
+			if( isset( $branchInfo[6] ) )
+			{
 				$commit->setSubject( $branchInfo[6] );
 			}
 
@@ -101,18 +107,21 @@ class CommandLine implements System
 
 	public function getTags( Repository $repository ): array
 	{
-		$output = $this->run( ['for-each-ref', 'refs/tags', '--format=%(refname:short)||%(objectname)||%(objectname:short)||%(taggername)||%(taggeremail)||%(taggerdate)||%(subject)'], $repository );
+		$output = $this->run( [ 'for-each-ref', 'refs/tags', '--format=%(refname:short)||%(objectname)||%(objectname:short)||%(taggername)||%(taggeremail)||%(taggerdate)||%(subject)' ], $repository );
 		$tagData = explode( PHP_EOL, $output );
 		$tags = [];
 
-		foreach ( $tagData as $tagItem ) {
-			if ( empty( $tagItem ) ) {
+		foreach( $tagData as $tagItem )
+		{
+			if( empty( $tagItem ) )
+			{
 				continue;
 			}
 
 			$tagInfo = explode( '||', $tagItem );
 
-			if ( !isset( $tagInfo[0] ) ) {
+			if( !isset( $tagInfo[0] ) )
+			{
 				continue;
 			}
 
@@ -120,12 +129,14 @@ class CommandLine implements System
 			$authoredAt = new CarbonImmutable( $tagInfo[5] );
 			$tag = new Tag( $repository, $tagInfo[0], $author, $authoredAt );
 
-			if ( isset( $tagInfo[1] ) ) {
+			if( isset( $tagInfo[1] ) )
+			{
 				$commit = new Commit( $repository, $tagInfo[1], $tagInfo[2] ?? null );
 				$tag->setTarget( $commit );
 			}
 
-			if ( isset( $tagInfo[6] ) ) {
+			if( isset( $tagInfo[6] ) )
+			{
 				$tag->setSubject( $tagInfo[6] );
 			}
 
@@ -137,14 +148,14 @@ class CommandLine implements System
 
 	public function getTree( Repository $repository, ?string $hash = 'HEAD' ): Tree
 	{
-		$output = $this->run( ['ls-tree', '-lz', '--full-tree', '--', $hash], $repository );
+		$output = $this->run( [ 'ls-tree', '-lz', '--full-tree', '--', $hash ], $repository );
 
 		return $this->buildTreeFromOutput( $repository, $hash, $output, true );
 	}
 
 	public function getRecursiveTree( Repository $repository, ?string $hash = 'HEAD' ): Tree
 	{
-		$output = $this->run( ['ls-tree', '-lzr', '--full-tree', '--', $hash], $repository );
+		$output = $this->run( [ 'ls-tree', '-lzr', '--full-tree', '--', $hash ], $repository );
 
 		return $this->buildTreeFromOutput( $repository, $hash, $output );
 	}
@@ -152,7 +163,7 @@ class CommandLine implements System
 	public function getPathTree( Repository $repository, string $path, ?string $hash = 'HEAD' ): Tree
 	{
 		$path = rtrim( $path, '/' ).'/';
-		$output = $this->run( ['ls-tree', '-lz', $hash, '--', $path], $repository );
+		$output = $this->run( [ 'ls-tree', '-lz', $hash, '--', $path ], $repository );
 		$tree = $this->buildTreeFromOutput( $repository, $hash, $output, true );
 		$tree->setName( rtrim( $path, '/' ) );
 
@@ -161,7 +172,7 @@ class CommandLine implements System
 
 	public function getCommit( Repository $repository, ?string $hash = 'HEAD' ): Commit
 	{
-		$output = $this->run( ['show', '--ignore-blank-lines', '-w', '-b', '--cc', self::DEFAULT_COMMIT_FORMAT, $hash], $repository );
+		$output = $this->run( [ 'show', '--ignore-blank-lines', '-w', '-b', '--cc', self::DEFAULT_COMMIT_FORMAT, $hash ], $repository );
 		$commits = $this->parseCommitDataXml( $repository, $output );
 		$commit = reset( $commits );
 
@@ -208,20 +219,22 @@ class CommandLine implements System
 
 	public function getSpecificCommits( Repository $repository, array $hashes ): array
 	{
-		$output = $this->run( [...['show', '-s', self::DEFAULT_COMMIT_FORMAT], ...$hashes], $repository );
+		$output = $this->run( [ ...[ 'show', '-s', self::DEFAULT_COMMIT_FORMAT ], ...$hashes ], $repository );
 
 		return $this->parseCommitsDataXml( $repository, $output );
 	}
 
 	public function getBlame( Repository $repository, string $hash, string $path ): Blame
 	{
-		$output = $this->run( ['blame', '--root', '-ls', $hash, '--', $path], $repository );
+		$output = $this->run( [ 'blame', '--root', '-ls', $hash, '--', $path ], $repository );
 		$blameLines = explode( PHP_EOL, $output );
 		$annotatedLines = [];
 		$commits = [];
 
-		foreach ( $blameLines as $blameLine ) {
-			if ( empty( $blameLine ) ) {
+		foreach( $blameLines as $blameLine )
+		{
+			if( empty( $blameLine ) )
+			{
 				continue;
 			}
 
@@ -238,7 +251,8 @@ class CommandLine implements System
 		$blame = new Blame( $hash, $path );
 		$commits = $this->getSpecificCommits( $repository, array_unique( $commits ) );
 
-		foreach ( $annotatedLines as $annotatedLine ) {
+		foreach( $annotatedLines as $annotatedLine )
+		{
 			$commit = $commits[$annotatedLine['commit']];
 			$blame->addAnnotatedLine( new AnnotatedLine( $commit, $annotatedLine['line'] ) );
 		}
@@ -261,24 +275,28 @@ class CommandLine implements System
 
 	public function searchCommits( Repository $repository, Criteria $criteria, ?string $hash = 'HEAD' ): array
 	{
-		$command = ['log', self::DEFAULT_COMMIT_FORMAT];
+		$command = [ 'log', self::DEFAULT_COMMIT_FORMAT ];
 
-		if ( $criteria->getFrom() ) {
+		if( $criteria->getFrom() )
+		{
 			$command[] = '--after';
 			$command[] = $criteria->getFrom()->format( DateTime::ISO8601 );
 		}
 
-		if ( $criteria->getTo() ) {
+		if( $criteria->getTo() )
+		{
 			$command[] = '--before';
 			$command[] = $criteria->getTo()->format( DateTime::ISO8601 );
 		}
 
-		if ( $criteria->getAuthor() ) {
+		if( $criteria->getAuthor() )
+		{
 			$command[] = '--author';
 			$command[] = $criteria->getAuthor();
 		}
 
-		if ( $criteria->getMessage() ) {
+		if( $criteria->getMessage() )
+		{
 			$command[] = '--grep';
 			$command[] = $criteria->getMessage();
 		}
@@ -293,7 +311,7 @@ class CommandLine implements System
 	{
 		$destination = sprintf( '%s/%s.%s', sys_get_temp_dir(), $hash, $format );
 
-		$this->run( ['archive', '--output', $destination, $hash, '--', $path], $repository );
+		$this->run( [ 'archive', '--output', $destination, $hash, '--', $path ], $repository );
 
 		return $destination;
 	}
@@ -305,13 +323,17 @@ class CommandLine implements System
 		$process = new Process( $command );
 		$process->setTimeout( self::DEFAULT_TIMEOUT );
 
-		if ( $repository ) {
+		if( $repository )
+		{
 			$process->setWorkingDirectory( $repository->getPath() );
 		}
 
-		try {
+		try
+		{
 			$process->mustRun();
-		} catch ( ProcessFailedException $exception ) {
+		}
+		catch( ProcessFailedException $exception )
+		{
 			throw new CommandException( $exception->getProcess()->getErrorOutput() );
 		}
 
@@ -323,19 +345,23 @@ class CommandLine implements System
 		$lines = explode( "\0", $output );
 		$root = new Tree( $repository, $hash );
 
-		foreach ( $lines as $line ) {
-			if ( empty( $line ) ) {
+		foreach( $lines as $line )
+		{
+			if( empty( $line ) )
+			{
 				continue;
 			}
 
 			$file = preg_split( '/[\s]+/', $line, 5 );
 
-			if ( 'commit' == $file[1] ) {
+			if( 'commit' == $file[1] )
+			{
 				// Don't handle submodules yet
 				continue;
 			}
 
-			if ( '120000' == $file[0] ) {
+			if( '120000' == $file[0] )
+			{
 				$symlinkTarget = $this->run( ['show', $file[2]], $repository );
 				$symlink = new Symlink( $repository, $file[2] );
 				$symlink->setMode( $file[0] );
@@ -347,16 +373,21 @@ class CommandLine implements System
 				continue;
 			}
 
-			if ( 'blob' == $file[1] ) {
+			if( 'blob' == $file[1] )
+			{
 				$blob = new Blob( $repository, $file[2] );
 				$blob->setMode( $file[0] );
 				$blob->setName( $file[4] );
 				$blob->setSize( (int) $file[3] );
 
-				if ( $fetchCommitInfo ) {
-					try {
+				if( $fetchCommitInfo )
+				{
+					try
+					{
 						$blob->addParent( $this->getLatestCommitFromPath( $repository, $file[4], $hash ) );
-					} catch ( InvalidCommitException ) {
+					}
+					catch( InvalidCommitException )
+					{
 						// Do not add parent
 					}
 				}
@@ -370,10 +401,14 @@ class CommandLine implements System
 			$tree->setMode( $file[0] );
 			$tree->setName( $file[4] );
 
-			if ( $fetchCommitInfo ) {
-				try {
+			if( $fetchCommitInfo )
+			{
+				try
+				{
 					$tree->addParent( $this->getLatestCommitFromPath( $repository, $file[4], $hash ) );
-				} catch ( InvalidCommitException ) {
+				}
+				catch( InvalidCommitException )
+				{
 					// Do not add parent
 				}
 			}
@@ -386,7 +421,7 @@ class CommandLine implements System
 
 	protected function getLatestCommitFromPath( Repository $repository, string $path, string $hash ): Commit
 	{
-		$output = $this->run( ['log', '-n', 1, self::DEFAULT_COMMIT_FORMAT, $hash, '--', $path], $repository );
+		$output = $this->run( [ 'log', '-n', 1, self::DEFAULT_COMMIT_FORMAT, $hash, '--', $path ], $repository );
 		$commits = $this->parseCommitDataXml( $repository, $output );
 
 		return reset( $commits );
@@ -396,7 +431,8 @@ class CommandLine implements System
 	{
 		$xmlStart = strpos( $input, '<item>' );
 
-		if ( false === $xmlStart ) {
+		if( false === $xmlStart )
+		{
 			throw new InvalidCommitException( $input );
 		}
 
@@ -411,13 +447,15 @@ class CommandLine implements System
 		$items = new SimpleXMLElement( '<items>'.$input.'</items>' );
 		$commits = [];
 
-		foreach ( $items as $item ) {
+		foreach( $items as $item )
+		{
 			$commit = new Commit( $repository, (string) $item->hash, (string) $item->short_hash );
 			$commit->setTree( new Tree( $repository, (string) $item->tree, (string) $item->short_tree ) );
 
 			$parents = explode( ' ', (string) $item->parent );
 			$shortParents = explode( ' ', (string) $item->short_parent );
-			foreach ( $parents as $key => $parent ) {
+			foreach( $parents as $key => $parent )
+			{
 				$commit->addParent( new Commit( $repository, $parent, $shortParents[$key] ?? null ) );
 			}
 
@@ -429,10 +467,12 @@ class CommandLine implements System
 			$commit->setCommitedAt( new CarbonImmutable( (string) $item->commiter_date ) );
 
 			$signatureStatus = (string) $item->valid_signature;
-			if ( 'N' != $signatureStatus ) {
+			if( 'N' != $signatureStatus )
+			{
 				$signature = new Signature( (string) $item->signer, (string) $item->signer_key );
 
-				if ( 'B' == $signatureStatus ) {
+				if( 'B' == $signatureStatus )
+				{
 					$signature->validate();
 				}
 

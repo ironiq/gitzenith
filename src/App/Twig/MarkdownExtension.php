@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith\App\Twig;
 
@@ -30,13 +30,14 @@ class MarkdownExtension extends AbstractExtension
 	public function getFilters()
 	{
 		return [
-			new TwigFilter( 'markdown', [$this, 'markdown'] ),
+			new TwigFilter( 'markdown', [ $this, 'markdown' ] ),
 		];
 	}
 
 	public function markdown( $string ): string
 	{
-		if ( !$string ) {
+		if( !$string )
+		{
 			return '';
 		}
 

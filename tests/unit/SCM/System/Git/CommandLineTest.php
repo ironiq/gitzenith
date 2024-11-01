@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith\SCM\System\Git;
 
@@ -21,7 +21,8 @@ class CommandLineTest extends TestCase
 
 	public function setUp(): void
 	{
-		if ( empty( shell_exec( 'which git 2> /dev/null' ) ) ) {
+		if( empty( shell_exec( 'which git 2> /dev/null' ) ) )
+		{
 			$this->markTestSkipped( 'Git is not available.' );
 		}
 	}

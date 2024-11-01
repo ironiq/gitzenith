@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith;
 
@@ -49,13 +49,15 @@ class Repository
 
 	public function getTree( ?string $commitish = null ): Tree
 	{
-		if ( !$commitish ) {
+		if( !$commitish )
+		{
 			return $this->system->getTree( $this->repository );
 		}
 
 		$commitish = new Commitish( $this, $commitish );
 
-		if ( $commitish->hasPath() ) {
+		if( $commitish->hasPath() )
+		{
 			return $this->system->getPathTree( $this->repository, $commitish->getPath(), $commitish->getHash() );
 		}
 
@@ -64,7 +66,8 @@ class Repository
 
 	public function getCommit( ?string $commitish = null ): Commit
 	{
-		if ( !$commitish ) {
+		if( !$commitish )
+		{
 			return $this->system->getCommit( $this->repository );
 		}
 
@@ -75,13 +78,15 @@ class Repository
 
 	public function getCommits( ?string $commitish, int $page, int $perPage ): array
 	{
-		if ( !$commitish ) {
+		if( !$commitish )
+		{
 			return $this->system->getCommits( $this->repository, null, $page, $perPage );
 		}
 
 		$commitish = new Commitish( $this, $commitish );
 
-		if ( $commitish->hasPath() ) {
+		if( $commitish->hasPath() )
+		{
 			return $this->system->getCommitsFromPath( $this->repository, $commitish->getPath(), $commitish->getHash(), $page, $perPage );
 		}
 
@@ -101,11 +106,13 @@ class Repository
 
 		$annotatedLines = $blame->getAnnotatedLines();
 		$lineAccumulator = '';
-		foreach ( $annotatedLines as $index => $currentLine ) {
+		foreach( $annotatedLines as $index => $currentLine )
+		{
 			$lineAccumulator .= $currentLine->getContents().PHP_EOL;
 			$nextLine = $annotatedLines[$index + 1] ?? null;
 
-			if ( $nextLine && $currentLine->getCommit() != $nextLine->getCommit() ) {
+			if( $nextLine && $currentLine->getCommit() != $nextLine->getCommit() )
+			{
 				$consolidatedBlame->addAnnotatedLine( new AnnotatedLine( $currentLine->getCommit(), $lineAccumulator ) );
 				$lineAccumulator = '';
 			}
@@ -118,10 +125,14 @@ class Repository
 	{
 		$commitish = new Commitish( $this, $commitish );
 
-		try {
+		try
+		{
 			return $this->system->getBlob( $this->repository, $commitish->getHash(), $commitish->getPath() );
-		} catch ( CommandException $exception ) {
-			if ( $exception->isNotFoundException() ) {
+		}
+		catch( CommandException $exception )
+		{
+			if ( $exception->isNotFoundException() )
+			{
 				throw new BlobNotFoundException();
 			}
 
@@ -131,7 +142,8 @@ class Repository
 
 	public function searchCommits( Criteria $criteria, ?string $commitish = null ): array
 	{
-		if ( !$commitish ) {
+		if( !$commitish )
+		{
 			return $this->system->searchCommits( $this->repository, $criteria );
 		}
 

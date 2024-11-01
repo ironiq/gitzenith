@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith\App\Controller;
 
@@ -24,7 +24,8 @@ class Blob
 		$commit = $repository->getCommit( $blob->getHash() );
 		$file = File::createFromBlob( $blob );
 
-		if ( $file->isBinary() ) {
+		if( $file->isBinary() )
+		{
 			$response = new Response( $file->getContents() );
 			$disposition = $response->headers->makeDisposition( ResponseHeaderBag::DISPOSITION_ATTACHMENT, $file->getName() );
 			$response->headers->set( 'Content-Disposition', $disposition );
@@ -50,7 +51,8 @@ class Blob
 		$response = new Response( $file->getContents() );
 		$response->headers->set( 'Content-Type', $file->getMimeType() );
 
-		if ( $file->isBinary() ) {
+		if( $file->isBinary() )
+		{
 			$disposition = $response->headers->makeDisposition( ResponseHeaderBag::DISPOSITION_ATTACHMENT, $file->getName() );
 			$response->headers->set( 'Content-Disposition', $disposition );
 		}
@@ -81,7 +83,8 @@ class Blob
 		$commits = $repository->getCommits( $commitish, $page, $perPage );
 		$commitGroups = [];
 
-		foreach ( $commits as $commit ) {
+		foreach( $commits as $commit )
+		{
 			$commitGroups[$commit->getCommitedAt()->format( 'Y-m-d' )][] = $commit;
 		}
 

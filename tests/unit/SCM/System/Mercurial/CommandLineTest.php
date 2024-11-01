@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith\SCM\System\Mercurial;
 
@@ -20,7 +20,8 @@ class CommandLineTest extends TestCase
 
 	public function setUp(): void
 	{
-		if ( empty( shell_exec( 'which hg 2> /dev/null' ) ) ) {
+		if( empty( shell_exec( 'which hg 2> /dev/null' ) ) )
+		{
 			$this->markTestSkipped( 'Mercurial is not available.' );
 		}
 	}

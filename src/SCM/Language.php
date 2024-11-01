@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace GitZenith\SCM;
 
@@ -7430,7 +7430,8 @@ class Language
 
 	public function __construct( string $extension )
 	{
-		if ( !isset( self::MAP[$extension] ) ) {
+		if ( !isset( self::MAP[$extension] ) )
+		{
 			return;
 		}
 
