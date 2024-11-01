@@ -4,6 +4,6 @@ parameters:
     paths:
         - src
     ignoreErrors:
-        - '#Method GitList\\Kernel::configureContainer\(\) is unused.#'
-        - '#Method GitList\\Kernel::configureRoutes\(\) is unused.#'
+        - '#Method GitZenith\\Kernel::configureContainer\(\) is unused.#'
+        - '#Method GitZenith\\Kernel::configureRoutes\(\) is unused.#'
         - '#Call to an undefined method Symfony\\Component\\HttpFoundation\\Session\\SessionInterface::getFlashBag#'

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace GitList\SCM\System\Mercurial;
+namespace GitZenith\SCM\System\Mercurial;
 
 use Carbon\Carbon;
-use GitList\SCM\Blame;
-use GitList\SCM\Blob;
-use GitList\SCM\Commit\Criteria;
-use GitList\SCM\Commit\Person;
-use GitList\SCM\Repository;
-use GitList\SCM\Symlink;
+use GitZenith\SCM\Blame;
+use GitZenith\SCM\Blob;
+use GitZenith\SCM\Commit\Criteria;
+use GitZenith\SCM\Commit\Person;
+use GitZenith\SCM\Repository;
+use GitZenith\SCM\Symlink;
 use PHPUnit\Framework\TestCase;
 use ZipArchive;
 

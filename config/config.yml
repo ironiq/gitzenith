@@ -1,4 +1,5 @@
-# GitList configuration
+# GitZenith configuration
+
 parameters:
   # Web application title
   title: GitZenith

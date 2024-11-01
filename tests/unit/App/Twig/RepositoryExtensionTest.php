@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace GitList\App\Twig;
+namespace GitZenith\App\Twig;
 
-use GitList\SCM\Repository;
-use GitList\SCM\Tree;
+use GitZenith\SCM\Repository;
+use GitZenith\SCM\Tree;
 use PHPUnit\Framework\TestCase;
 
 class RepositoryExtensionTest extends TestCase

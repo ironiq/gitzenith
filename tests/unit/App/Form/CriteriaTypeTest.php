@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace GitList\App\Form;
+namespace GitZenith\App\Form;
 
 use DateTime;
-use GitList\SCM\Commit\Criteria;
+use GitZenith\SCM\Commit\Criteria;
 use Symfony\Component\Form\Test\TypeTestCase;
 
 class CriteriaTypeTest extends TypeTestCase

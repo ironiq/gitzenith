@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GitList\SCM;
+namespace GitZenith\SCM;
 
-use GitList\SCM\Diff\File;
+use GitZenith\SCM\Diff\File;
 use PHPUnit\Framework\TestCase;
 
 class CommitTest extends TestCase

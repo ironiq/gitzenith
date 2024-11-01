@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace GitList\Repository;
+namespace GitZenith\Repository;
 
 use Carbon\Carbon;
-use GitList\Repository;
-use GitList\SCM\Branch;
-use GitList\SCM\Commit;
-use GitList\SCM\Commit\Person;
-use GitList\SCM\Repository as SourceRepository;
-use GitList\SCM\Tag;
+use GitZenith\Repository;
+use GitZenith\SCM\Branch;
+use GitZenith\SCM\Commit;
+use GitZenith\SCM\Commit\Person;
+use GitZenith\SCM\Repository as SourceRepository;
+use GitZenith\SCM\Tag;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 
