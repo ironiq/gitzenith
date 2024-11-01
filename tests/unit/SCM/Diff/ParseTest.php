@@ -89,7 +89,7 @@ DIFF;
 		$this->assertEquals( 23, $firstHunk->getNewStart() );
 		$this->assertEquals( 6, $firstHunk->getNewCount() );
 		$this->assertEquals( '@@ -23,7 +23,6 @@', $firstHunk->getContents() );
-		$this->assertCount( 7, $firstHunk->getLines() );
+		$this->assertCount( 8, $firstHunk->getLines() );
 
 		// Line 1
 		$this->assertEquals( ' #  define DEBUG', $firstHunk->getLines()[0]->getContents() );

@@ -16,7 +16,7 @@ use ZipArchive;
 
 class CommandLineTest extends TestCase
 {
-	public const FIXTURE_REPO = FIXTURE_DIR.'/hg-repo';
+	public const FIXTURE_REPO = FIXTURE_DIR . '/hg-repo';
 
 	public function setUp(): void
 	{
@@ -98,6 +98,7 @@ class CommandLineTest extends TestCase
 		static::assertCount( 4, $tree->getChildren() );
 
 		$file1 = $tree->getChildren()[0];
+		/** @disregard P1009 false positive */
 		static::assertInstanceOf( Tree::class, $file1 );
 		static::assertEquals( 'mm', $file1->getName() );
 		static::assertEquals( '3ef8d557da820c5c0fbb3a47c0f4b16cabd01a4c', $file1->getHash() );
@@ -113,6 +114,7 @@ class CommandLineTest extends TestCase
 		static::assertEquals( 0, $file2->getSize() );
 
 		$file3 = $tree->getChildren()[2];
+		/** @disregard P1009 false positive */
 		static::assertInstanceOf( Tree::class, $file3 );
 		static::assertEquals( 'src', $file3->getName() );
 		static::assertEquals( '8afa803b8db8f69d45ca64f6e75abd240f5c4417', $file3->getHash() );
