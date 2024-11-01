@@ -64,6 +64,8 @@ jobs:
         run: npm test
 
   release:
+    env:
+      REPONAME: ${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}
     if: startsWith(github.ref, 'refs/tags/')
     strategy:
       matrix:
@@ -87,7 +89,7 @@ jobs:
         run: make build
 
       - name: Rename package to current tag
-        run: mv build.zip gitzenith-${{ github.ref_name }}.zip
+        run: mv build.zip $REPONAME-${{ github.ref_name }}.zip
 
       - name: Release
         uses: softprops/action-gh-release@v1
