@@ -131,6 +131,15 @@ class Parse
 		$oldNumber = $this->oldCounter + $this->deletedLines;
 		$newNumber = $this->newCounter;
 
+		if( null == $this->currentHunk )
+		{
+			$this->hunk( $line, $context );
+		}
+		else
+		{
+			$this->currentHunk->addLine( new Line( $line, Line::TYPE_ADD, $oldNumber, $newNumber ) );
+		}
+
 		$this->currentHunk->addLine( new Line( $line, Line::TYPE_DELETE, $oldNumber, $newNumber ) );
 		$this->currentFile->increaseDeletions();
 		++$this->deletedLines;
