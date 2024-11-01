@@ -17,7 +17,8 @@ jobs:
     steps:
       - name: Set ENV variables
         run: |
-          echo "REPONAME=${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}" >> $GITHUB_ENV
+          echo "REPONAME=$(basename ${{ github.repository }})" >> $GITHUB_ENV
+        shell: bash
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -33,12 +34,12 @@ jobs:
       - name: Build package
         run: make build
 
-      - name: Rename package to current tag
+      - name: Rename package
         run: |
-          mv build.zip $REPONAME-${{ github.ref_name }}.zip
+          mv build.zip ${{ env.REPONAME }}-${{ github.ref_name }}.zip
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           generate_release_notes: true
-          files: $REPONAME-${{ github.ref_name }}.zip
+          files: ${{ env.REPONAME }}-${{ github.ref_name }}.zip
