@@ -14,6 +14,10 @@ interface System
 
 	public function getDefaultBranch( Repository $repository ): string;
 
+	public function getCurrentBranch( Repository $repository ): string;
+
+	public function setCurrentBranch( Repository $repository, string $branch ): bool;
+
 	public function getBranches( Repository $repository ): array;
 
 	public function getTags( Repository $repository ): array;

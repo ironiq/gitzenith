@@ -52,7 +52,14 @@ class RepositoryExtension extends AbstractExtension
 
 	public function getCommitish( string $hash, string $path ): string
 	{
-		return $hash.'/'.$path;
+		if( $path != '' )
+		{
+			return $hash.'/'.$path;
+		}
+		else
+		{
+			return $hash;
+		}
 	}
 
 	public function getParent( string $path ): string

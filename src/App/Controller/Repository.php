@@ -70,7 +70,11 @@ class Repository
 
 	public function showTree( string $repository, string $commitish ): Response
 	{
+		$arr = explode( '/', $commitish );
+		$branch = $arr[0];
 		$repository = $this->index->getRepository( $repository );
+		$repository->setCurrentBranch( $repository, $branch );
+		dd( $this->index );
 		$tree = $repository->getTree( $commitish );
 		$lastCommit = $repository->getCommit( $tree->getHash() );
 		$readme = $tree->getReadme();

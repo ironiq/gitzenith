@@ -75,6 +75,26 @@ class CommandLine implements System
 		return trim( $branch );
 	}
 
+	public function getCurrentBranch( Repository $repository ): string
+	{
+		$output = $this->run( [ 'branch', '--show-current', '--format=%(name)' ], $repository );
+		$branchName = explode( PHP_EOL, $output )[0];
+
+		return $branchName;
+	}
+
+	public function setCurrentBranch( Repository $repository, string $branch ): bool
+	{
+		$branches = $this->getBranches( $repository );
+		$ret = false;
+		if( in_array( $branch, $branches ) )
+		{
+			$output = $this->run( [ 'checkout', $branch ] );
+			$ret = true;
+		}
+		return $ret;
+	}
+
 	public function getBranches( Repository $repository ): array
 	{
 		$output = $this->run( [ 'for-each-ref', 'refs/heads', '--format=%(refname:short)||%(objectname)||%(objectname:short)||%(authorname)||%(authoremail)||%(authordate)||%(subject)' ], $repository );

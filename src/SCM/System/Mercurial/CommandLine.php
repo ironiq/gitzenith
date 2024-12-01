@@ -70,6 +70,16 @@ class CommandLine implements System
 		return 'default';
 	}
 
+	public function getCurrentBranch( Repository $repository ): string
+	{
+		return 'default';
+	}
+
+	public function setCurrentBranch( Repository $repository, string $branch ): bool
+	{
+		return true;
+	}
+
 	public function getBranches( Repository $repository ): array
 	{
 		$output = $this->run( [ 'heads', '-T {bookmarks}||{node}\n' ], $repository );

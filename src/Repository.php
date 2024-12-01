@@ -37,6 +37,16 @@ class Repository
 		return $this->system->getDefaultBranch( $this->repository );
 	}
 
+	public function getCurrentBranch(): string
+	{
+		return $this->system->getCurrentBranch( $this->repository );
+	}
+
+	public function setCurrentBranch( $repo, $branch ): bool
+	{
+		return $this->system->setCurrentBranch( $this->repository, $branch );
+	}
+
 	public function getBranches(): array
 	{
 		return $this->system->getBranches( $this->repository );

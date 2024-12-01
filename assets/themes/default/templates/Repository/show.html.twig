@@ -36,7 +36,7 @@
 
   <div class="row module-row">
     <div class="col-4">
-      {% include 'reflist.html.twig' with { ref: repository.defaultbranch, refPath: '', path: 'repository_tree', repository: repository } %}
+      {% include 'reflist.html.twig' with { ref: repository.currentbranch, refPath: '', path: 'repository_tree', repository: repository } %}
     </div>
     <div class="col-8">
       <div class="btn-toolbar justify-content-end">
