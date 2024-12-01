@@ -394,12 +394,12 @@ class CommandLine implements System
 
 			$file = preg_split( '/[\s]+/', $line, 4 );
 
-			if( '.hgtags' == $file[2] )
+			if( $file[2] == '.hgtags' )
 			{
 				continue;
 			}
 
-			if( '@' == $file[2] )
+			if( $file[2] == '@' )
 			{
 				$symlinkTarget = $this->run( [ 'cat', '-r', $hash, $file[3] ], $repository );
 				$symlink = new Symlink( $repository, $file[0] );

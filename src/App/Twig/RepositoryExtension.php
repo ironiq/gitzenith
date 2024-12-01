@@ -66,7 +66,7 @@ class RepositoryExtension extends AbstractExtension
 	{
 		$parent = dirname( $path );
 
-		if( '.' == $parent )
+		if( $parent == '.' )
 		{
 			return '';
 		}
@@ -82,7 +82,7 @@ class RepositoryExtension extends AbstractExtension
 
 		foreach( $parts as $index => $part )
 		{
-			$previousPart .= ( 0 == $index ? '' : '/' ).$part;
+			$previousPart .= ( $index == 0 ? '' : '/' ).$part;
 			$breadcrumbs[] = [
 				'name' => $part,
 				'commitish' => $this->getCommitish( $blob->getHash(), $previousPart ),

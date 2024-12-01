@@ -68,7 +68,7 @@ class Kernel extends BaseKernel
 		$confDir = $this->getProjectDir().'/config';
 		$routes->import( $confDir.'/routes.yml' );
 
-		if( 'dev' == $this->environment )
+		if( $this->environment == 'dev' )
 		{
 			$routes->import( $confDir.'/dev/routes.yml' );
 		}

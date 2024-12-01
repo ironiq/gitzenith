@@ -36,6 +36,12 @@ return $config->setRules([
 			'closure_fn_spacing' => 'none',
 			'closure_function_spacing' => 'none',
 		],
+		'yoda_style' => [
+			'equal' => false,
+			'identical' => false,
+			'less_and_greater' => false,
+			'always_move_variable' => false,
+		]
 	])
 	->setIndent("\t")
 	->setRiskyAllowed(true)

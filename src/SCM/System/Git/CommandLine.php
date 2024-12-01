@@ -374,13 +374,13 @@ class CommandLine implements System
 
 			$file = preg_split( '/[\s]+/', $line, 5 );
 
-			if( 'commit' == $file[1] )
+			if( $file[1] == 'commit' )
 			{
 				// Don't handle submodules yet
 				continue;
 			}
 
-			if( '120000' == $file[0] )
+			if( $file[0] == '120000' )
 			{
 				$symlinkTarget = $this->run( ['show', $file[2]], $repository );
 				$symlink = new Symlink( $repository, $file[2] );
@@ -393,7 +393,7 @@ class CommandLine implements System
 				continue;
 			}
 
-			if( 'blob' == $file[1] )
+			if( $file[1] == 'blob' )
 			{
 				$blob = new Blob( $repository, $file[2] );
 				$blob->setMode( $file[0] );
@@ -451,7 +451,7 @@ class CommandLine implements System
 	{
 		$xmlStart = strpos( $input, '<item>' );
 
-		if( false === $xmlStart )
+		if( $xmlStart === false )
 		{
 			throw new InvalidCommitException( $input );
 		}
@@ -487,11 +487,11 @@ class CommandLine implements System
 			$commit->setCommitedAt( new CarbonImmutable( (string) $item->commiter_date ) );
 
 			$signatureStatus = (string) $item->valid_signature;
-			if( 'N' != $signatureStatus )
+			if( $signatureStatus != 'N' )
 			{
 				$signature = new Signature( (string) $item->signer, (string) $item->signer_key );
 
-				if( 'B' == $signatureStatus )
+				if( $signatureStatus == 'B' )
 				{
 					$signature->validate();
 				}

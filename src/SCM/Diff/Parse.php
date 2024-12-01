@@ -131,7 +131,7 @@ class Parse
 		$oldNumber = $this->oldCounter + $this->deletedLines;
 		$newNumber = $this->newCounter;
 
-		if( null == $this->currentHunk )
+		if( $this->currentHunk == null )
 		{
 			$this->hunk( $line, $context );
 		}
@@ -149,7 +149,7 @@ class Parse
 		$oldNumber = $this->oldCounter;
 		$newNumber = $this->newCounter + $this->addedLines;
 
-		if( null == $this->currentHunk )
+		if( $this->currentHunk == null )
 		{
 			$this->hunk( $line, $context );
 		}
