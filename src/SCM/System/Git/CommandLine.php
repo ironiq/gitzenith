@@ -92,6 +92,7 @@ class CommandLine implements System
 			$output = $this->run( [ 'checkout', $branch ] );
 			$ret = true;
 		}
+
 		return $ret;
 	}
 
