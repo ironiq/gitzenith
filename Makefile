@@ -7,7 +7,8 @@ EXEC_PHP ?= $(EXEC_DOCKER) php-fpm
 EXEC_NODE ?= $(EXEC_DOCKER) node
 EXEC_WEB ?= $(EXEC_DOCKER) web
 
-help: # Display the application manual
+# Display the application manual
+help:
 	@echo -e "$(NAME) version \033[33m$(VERSION)\n\e[0m"
 	@echo -e "\033[1;37mUSAGE\e[0m"
 	@echo -e "  \e[4mmake\e[0m <command> [<arg1>] ... [<argN>]\n"
@@ -22,38 +23,52 @@ check-deps: check-local-overrides
 	  echo "\033[0;32mdocker compose installed\033[0m";\
 	fi
 
-setup: check-deps # Setup dependencies and development configuration
+# Setup dependencies and development configuration
+setup: check-deps
 	@docker compose pull || true
 	@docker compose up -d --build
+	$(EXEC_PHP) git config --global --add safe.directory /application
 	$(EXEC_PHP) composer install
 
-up: # Create and start containers
+# Update dependencies
+update: check-deps
+	@docker compose pull || true
+	@docker compose up -d --build
+	$(EXEC_PHP) git config --global --add safe.directory /application
+	$(EXEC_PHP) composer update
+
+# Create and start containers
+up:
 	@docker compose up -d
 
-clean: # Cleanup containers and build artifacts
+# Cleanup containers and build artifacts
+clean:
 	@docker compose down
 	$(MAKE) setup
 
-bash: # Start a bash session in the PHP container
+# Start a bash session in the PHP container
+bash:
 	@docker compose exec php-fpm /bin/bash
 
-test: # Run automated test suite
+# Run automated test suite
+test:
 	$(EXEC_PHP) composer test
 	$(EXEC_NODE) npm run test
 
-acceptance:# Run acceptance test suite
+# Run acceptance test suite
+acceptance:
 	$(EXEC_NODE) npm run cypress
 
-show-app: # Open applicatipn in your browser
+# Open applicatipn in your browser
+show-app:
 	xdg-open http://$$(docker-compose port webserver 80)/
 
-update: # Update dependencies
-	$(EXEC_PHP) composer update
-
-format: # Run code style autoformatter
+# Run code style autoformatter
+format:
 	$(EXEC_PHP) composer format
 
-build: # Build application package
+# Build application package
+build:
 	@rm -rf vendor/
 	@rm -rf public/assets/*
 	@composer install --ignore-platform-reqs --no-dev --no-scripts -o
