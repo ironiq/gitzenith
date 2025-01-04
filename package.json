@@ -1,7 +1,7 @@
 {
-  "name": "gitlist",
+  "name": "gitzenith",
   "main": "index.js",
-  "repository": "https://github.com/klaussilveira/gitlist",
+  "repository": "https://github.com/ironiq/gitzenith",
   "license": "BSD-3-Clause",
   "scripts": {
     "dev-server": "encore dev-server",
