@@ -63,15 +63,32 @@ class Repository
 		{
 			return $this->system->getTree( $this->repository );
 		}
-
 		$commitish = new Commitish( $this, $commitish );
 
-		if( $commitish->hasPath() )
+		$branches = [];
+		foreach( $this->getBranches() as $bra )
 		{
-			return $this->system->getPathTree( $this->repository, $commitish->getPath(), $commitish->getHash() );
+			$branches[] = $bra->getName();
 		}
 
-		return $this->system->getTree( $this->repository, $commitish->getHash() );
+		if( !in_array( $commitish->getHash(), $branches ) )
+		{
+			if( $commitish->hasPath() )
+			{
+				$ret = $this->system->getPathTree( $this->repository, $commitish->getPath(), $commitish->getHash() );
+			}
+			else
+			{
+				$ret = $this->system->getTree( $this->repository, $commitish->getHash() );
+			}
+		}
+		else
+		{
+			$lastcommit = $this->getLastCommit( $commitish->getHash() );
+			$ret = $this->system->getTree( $this->repository, $lastcommit->getHash() );
+		}
+
+		return $ret;
 	}
 
 	public function getCommit( ?string $commitish = null ): Commit
@@ -84,6 +101,14 @@ class Repository
 		$commitish = new Commitish( $this, $commitish );
 
 		return $this->system->getCommit( $this->repository, $commitish->getHash() );
+	}
+
+	public function getLastCommit( ?string $commitish = null ): Commit
+	{
+		$commits = $this->getCommits( $commitish, 1, 1 );
+		$key = array_keys( $commits )[0];
+
+		return $commits[$key];
 	}
 
 	public function getCommits( ?string $commitish, int $page, int $perPage ): array
