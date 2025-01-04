@@ -42,7 +42,7 @@ class Repository
 		return $this->system->getCurrentBranch( $this->repository );
 	}
 
-	public function setCurrentBranch( $repo, $branch ): bool
+	public function setCurrentBranch( $branch ): bool
 	{
 		return $this->system->setCurrentBranch( $this->repository, $branch );
 	}
