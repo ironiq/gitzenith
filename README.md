@@ -28,7 +28,7 @@ In order to run GitZenith on your server, you'll need:
   * Alternatively, you can export the environment variable `DEFAULT_REPOSITORY_DIR` with the directory containing your repositories
 * Create the cache and log folder and give it read/write permissions to your web server user:
 
-```
+```bash
 cd /var/www/gitzenith
 mkdir -p var/cache
 chmod 777 var/cache
