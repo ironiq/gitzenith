@@ -48,21 +48,21 @@ class CommandLine implements System
 	{
 		$path = $repository->getPath();
 
-		return file_exists( $path ) && ( file_exists( $path.'/.git/HEAD' ) || file_exists( $path.'/HEAD' ) );
+		return file_exists( $path ) && ( file_exists( $path . '/.git/HEAD' ) || file_exists( $path . '/HEAD' ) );
 	}
 
 	public function getDescription( Repository $repository ): string
 	{
 		$path = $repository->getPath();
 
-		if ( file_exists( $path.'/description' ) )
+		if ( file_exists( $path . '/description' ) )
 		{
-			return file_get_contents( $path.'/description' );
+			return file_get_contents( $path . '/description' );
 		}
 
-		if ( file_exists( $path.'/.git/description' ) )
+		if ( file_exists( $path . '/.git/description' ) )
 		{
-			return file_get_contents( $path.'/.git/description' );
+			return file_get_contents( $path . '/.git/description' );
 		}
 
 		return '';
@@ -85,7 +85,12 @@ class CommandLine implements System
 
 	public function setCurrentBranch( Repository $repository, string $branch ): bool
 	{
-		$branches = $this->getBranches( $repository );
+		$branches = [];
+		foreach( $this->getBranches( $repository ) as $b )
+		{
+			$branches[] = $b->getName();
+		}
+
 		$ret = false;
 		if( in_array( $branch, $branches ) )
 		{
@@ -285,7 +290,7 @@ class CommandLine implements System
 	{
 		$commits = $this->getCommitsFromPath( $repository, $path, $hash, 1, 1 );
 		$commit = reset( $commits );
-		$blobOutput = $this->run( ['show', sprintf( '%s:%s', $hash, $path )], $repository );
+		$blobOutput = $this->run( [ 'show', sprintf( '%s:%s', $hash, $path ) ], $repository );
 
 		$blob = new Blob( $repository, $commit->getHash(), $commit->getShortHash() );
 		$blob->setName( $path );
