@@ -18,7 +18,7 @@ class Commitish
 
 		foreach( $revs as $rev )
 		{
-			if( false === ( $pos = strpos( $commitish, (string) $rev->getName() ) ) )
+			if( false === ( $pos = strpos( $this->hash, (string) $rev->getName() ) ) )
 			{
 				continue;
 			}
