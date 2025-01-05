@@ -70,10 +70,36 @@ class Repository
 
 	public function showTree( string $repository, string $commitish ): Response
 	{
-		$arr = explode( '/', $commitish );
-		$branch = $arr[0];
+		$commitid = explode( '/', $commitish )[0];
+
 		$repository = $this->index->getRepository( $repository );
-		$repository->setCurrentBranch( $repository, $branch );
+		$curbranch = $repository->getCurrentBranch();
+
+		$branches = [];
+		foreach( $repository->getBranches( $repository ) as $b )
+		{
+			$branches[] = $b->getName();
+		}
+		if( in_array( $commitid, $branches ) && $commitid !== $curbranch )
+		{
+			$repository->setCurrentBranch( $repository, $commitid );
+			$curbranch = $repository->getCurrentBranch();
+		}
+
+		$origcommit = $this->index->getSystem( $repository->getRepository() )->getCommit( $repository->getRepository(), $commitid );
+
+		if( $commitid === 'HEAD' || $commitid === $curbranch )
+		{
+			$shortref = $curbranch;
+			$longref = $shortref;
+		}
+		else
+		{
+			$shortref = $origcommit->getShortHash();
+			$longref = $origcommit->getHash();
+			$repository->setCurrentBranch( $repository, $commitid );
+		}
+
 		$tree = $repository->getTree( $commitish );
 		$lastCommit = $repository->getCommit( $tree->getHash() );
 		$readme = $tree->getReadme();
@@ -89,6 +115,8 @@ class Repository
 			'tree' => $tree,
 			'lastCommit' => $lastCommit,
 			'readme' => $readme,
+			'shortref' => $shortref,
+			'longref' => $longref,
 		] ) );
 	}
 

@@ -22,6 +22,11 @@ class Repository
 	{
 	}
 
+	public function getRepository(): SourceRepository
+	{
+		return $this->repository;
+	}
+
 	public function getName(): string
 	{
 		return $this->name;
@@ -64,6 +69,11 @@ class Repository
 			return $this->system->getTree( $this->repository );
 		}
 		$commitish = new Commitish( $this, $commitish );
+		$path = '';
+		if( $commitish->hasPath() )
+		{
+			$path = '/' . $commitish->getPath();
+		}
 
 		$branches = [];
 		foreach( $this->getBranches() as $bra )
@@ -71,21 +81,18 @@ class Repository
 			$branches[] = $bra->getName();
 		}
 
-		if( !in_array( $commitish->getHash(), $branches ) )
+		if( in_array( $commitish->getHash(), $branches ) )
 		{
-			if( $commitish->hasPath() )
-			{
-				$ret = $this->system->getPathTree( $this->repository, $commitish->getPath(), $commitish->getHash() );
-			}
-			else
-			{
-				$ret = $this->system->getTree( $this->repository, $commitish->getHash() );
-			}
+			$lastcommit = $this->getLastCommit( $commitish->getHash() );
+			$commitish = new Commitish( $this, $lastcommit->getHash() . $path );
+		}
+		if( $commitish->hasPath() )
+		{
+			$ret = $this->system->getPathTree( $this->repository, $commitish->getPath(), $commitish->getHash() );
 		}
 		else
 		{
-			$lastcommit = $this->getLastCommit( $commitish->getHash() );
-			$ret = $this->system->getTree( $this->repository, $lastcommit->getHash() );
+			$ret = $this->system->getTree( $this->repository, $commitish->getHash() );
 		}
 
 		return $ret;
@@ -159,6 +166,7 @@ class Repository
 	public function getBlob( string $commitish ): Blob
 	{
 		$commitish = new Commitish( $this, $commitish );
+		// dd( $commitish );
 
 		try
 		{

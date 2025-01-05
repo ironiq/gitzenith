@@ -36,7 +36,7 @@
 
   <div class="row module-row">
     <div class="col-4">
-      {% include 'reflist.html.twig' with { ref: repository.currentbranch, refPath: '', path: 'repository_tree', repository: repository } %}
+      {% include 'reflist.html.twig' with { ref: shortref, refPath: '', path: 'repository_tree', repository: repository } %}
     </div>
     <div class="col-8">
       <div class="btn-toolbar justify-content-end">
@@ -129,7 +129,7 @@
                 <th scope="row" class="tree-filename">
                   <span class="tree-truncate">
                     <i class="icon ion-md-folder"></i>
-                    <a href="{{ path('repository_tree', {repository: repository.name, commitish: getCommitish(tree.hash, object.name) }) }}" title="{{ object.fileName }}">
+                    <a href="{{ path('repository_tree', {repository: repository.name, commitish: getCommitish(longref, object.name) }) }}" title="{{ object.fileName }}">
                       {{ object.fileName }}
                     </a>
                   </span>
@@ -161,7 +161,7 @@
                 <th scope="row" class="tree-filename">
                   <span class="tree-truncate">
                     <i class="icon ion-md-document"></i>
-                    <a href="{{ path('blob_show', {repository: repository.name, commitish: getCommitish(tree.hash, object.name) }) }}" title="{{ object.fileName }}">
+                    <a href="{{ path('blob_show', {repository: repository.name, commitish: getCommitish(longref, object.name) }) }}" title="{{ object.fileName }}">
                       {{ object.fileName }}
                     </a>
                   </span>

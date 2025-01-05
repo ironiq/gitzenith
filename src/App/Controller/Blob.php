@@ -19,10 +19,38 @@ class Blob
 
 	public function show( string $repository, string $commitish ): Response
 	{
+		$arr = explode( '/', $commitish );
+		$commitid = $arr[0];
+
 		$repository = $this->index->getRepository( $repository );
+		$curbranch = $repository->getCurrentBranch();
+
+		$branches = [];
+		foreach( $repository->getBranches( $repository ) as $b )
+		{
+			$branches[] = $b->getName();
+		}
+		if( in_array( $commitid, $branches ) && $commitid !== $curbranch )
+		{
+			$repository->setCurrentBranch( $repository, $commitid );
+			$curbranch = $repository->getCurrentBranch();
+		}
+
+		$origcommit = $this->index->getSystem( $repository->getRepository() )->getCommit( $repository->getRepository(), $commitid );
 		$blob = $repository->getBlob( $commitish );
 		$commit = $repository->getCommit( $blob->getHash() );
 		$file = File::createFromBlob( $blob );
+
+		if( $commitid === 'HEAD' || $commitid === $curbranch )
+		{
+			$shortref = $curbranch;
+			$longref = $shortref;
+		}
+		else
+		{
+			$shortref = $origcommit->getShortHash();
+			$longref = $origcommit->getHash();
+		}
 
 		if( $file->isBinary() )
 		{
@@ -39,6 +67,8 @@ class Blob
 			'commit' => $commit,
 			'blob' => $blob,
 			'file' => $file,
+			'shortref' => $shortref,
+			'longref' => $longref,
 		] ) );
 	}
 

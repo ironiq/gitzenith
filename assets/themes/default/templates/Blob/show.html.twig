@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block body %}
-  {% include 'Blob/breadcrumb.html.twig' with { repository: repository, blob: blob } %}
+  {% include 'Blob/breadcrumb.html.twig' with { repository: repository, blob: blob, shortref: shortref, longref: longref } %}
 
   <div class="row module-row">
     <div class="col-12">
