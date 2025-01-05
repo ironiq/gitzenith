@@ -73,7 +73,7 @@ class Repository
 		$arr = explode( '/', $commitish );
 		$branch = $arr[0];
 		$repository = $this->index->getRepository( $repository );
-		$repository->setCurrentBranch( $branch );
+		$repository->setCurrentBranch( $repository, $branch );
 		$tree = $repository->getTree( $commitish );
 		$lastCommit = $repository->getCommit( $tree->getHash() );
 		$readme = $tree->getReadme();

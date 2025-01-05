@@ -94,7 +94,7 @@ class CommandLine implements System
 		$ret = false;
 		if( in_array( $branch, $branches ) )
 		{
-			$output = $this->run( [ 'checkout', $branch ] );
+			$output = $this->run( [ 'checkout', $branch ], $repository );
 			$ret = true;
 		}
 
