@@ -306,13 +306,13 @@ class CommandLine implements System
 		if( $criteria->getFrom() )
 		{
 			$command[] = '--after';
-			$command[] = $criteria->getFrom()->format( DateTime::ISO8601 );
+			$command[] = $criteria->getFrom()->format( DateTime::ISO8601_EXPANDED );
 		}
 
 		if( $criteria->getTo() )
 		{
 			$command[] = '--before';
-			$command[] = $criteria->getTo()->format( DateTime::ISO8601 );
+			$command[] = $criteria->getTo()->format( DateTime::ISO8601_EXPANDED );
 		}
 
 		if( $criteria->getAuthor() )
