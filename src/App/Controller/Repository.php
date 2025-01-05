@@ -65,6 +65,8 @@ class Repository
 			'tree' => $tree,
 			'lastCommit' => $lastCommit,
 			'readme' => $readme,
+			'shortref' => '',
+			'longref' => '',
 		] ) );
 	}
 
