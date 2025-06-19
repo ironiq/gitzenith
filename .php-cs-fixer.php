@@ -11,7 +11,7 @@ return $config
 	->setRiskyAllowed(true)
 	->setIndent("\t")
 	->setRules([
-		'@Symfony:risky' => true,
+		'@Symfony' => true,
 		'braces_position' => [
 			'functions_opening_brace' => 'next_line_unless_newline_at_signature_end',
 			'classes_opening_brace' => 'next_line_unless_newline_at_signature_end',
