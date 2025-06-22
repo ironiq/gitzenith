@@ -36,7 +36,7 @@ class Repository
 		{
 			$tree = $repository->getTree();
 		}
-		catch ( CommandException $exception )
+		catch ( CommandException )
 		{
 			$tree = false;
 		}
@@ -47,7 +47,7 @@ class Repository
 
 			if( $readme )
 			{
-				$blob = $repository->getBlob( $tree->getHash().'/'.$readme->getName() );
+				$blob = $repository->getBlob( $tree->getHash() . '/' . $readme->getName() );
 				$readme = File::createFromBlob( $blob );
 			}
 			$tpl = 'Repository/show.html.twig';
@@ -78,11 +78,11 @@ class Repository
 		$curbranch = $repository->getCurrentBranch();
 
 		$branches = [];
-		foreach( $repository->getBranches( $repository ) as $b )
+		foreach( $repository->getBranches() as $b )
 		{
 			$branches[] = $b->getName();
 		}
-		if( in_array( $commitid, $branches ) && $commitid !== $curbranch )
+		if( \in_array( $commitid, $branches ) && $commitid !== $curbranch )
 		{
 			$repository->setCurrentBranch( $repository, $commitid );
 			$curbranch = $repository->getCurrentBranch();
@@ -108,7 +108,7 @@ class Repository
 
 		if( $readme )
 		{
-			$blob = $repository->getBlob( $tree->getHash().'/'.$readme->getName() );
+			$blob = $repository->getBlob( $tree->getHash() . '/' . $readme->getName() );
 			$readme = File::createFromBlob( $blob );
 		}
 
@@ -154,7 +154,12 @@ class Repository
 			throw new NotFoundHttpException();
 		}
 
-		$response = new Response( file_get_contents( $archive ) );
+		$archivecontent = file_get_contents( $archive );
+		if( !$archivecontent )
+		{
+			$archivecontent = null;
+		}
+		$response = new Response( $archivecontent );
 		$disposition = $response->headers->makeDisposition( ResponseHeaderBag::DISPOSITION_ATTACHMENT, basename( $archive ) );
 		$response->headers->set( 'Content-Disposition', $disposition );
 		$response->headers->set( 'Content-Type', 'application/octet-stream' );

@@ -54,7 +54,7 @@ class RepositoryExtension extends AbstractExtension
 	{
 		if( $path != '' )
 		{
-			return $hash.'/'.$path;
+			return $hash . '/' . $path;
 		}
 		else
 		{
@@ -82,7 +82,7 @@ class RepositoryExtension extends AbstractExtension
 
 		foreach( $parts as $index => $part )
 		{
-			$previousPart .= ( $index == 0 ? '' : '/' ).$part;
+			$previousPart .= ( $index == 0 ? '' : '/' ) . $part;
 			$breadcrumbs[] = [
 				'name' => $part,
 				'commitish' => $this->getCommitish( $blob->getHash(), $previousPart ),
@@ -104,6 +104,6 @@ class RepositoryExtension extends AbstractExtension
 		$pow = min( $pow, count( $units ) - 1 );
 		$value /= 1024 ** $pow;
 
-		return (string) round( $value, 2 ).' '.$units[$pow];
+		return (string) round( $value, 2 ) . ' ' . $units[$pow];
 	}
 }

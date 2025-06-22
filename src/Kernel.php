@@ -22,17 +22,17 @@ class Kernel extends BaseKernel
 
 	public function getProjectDir(): string
 	{
-		return __DIR__.'/../';
+		return __DIR__ . '/../';
 	}
 
 	public function getCacheDir(): string
 	{
-		return $this->getProjectDir().'/var/cache/'.$this->environment;
+		return $this->getProjectDir() . '/var/cache/' . $this->environment;
 	}
 
 	public function getLogDir(): string
 	{
-		return $this->getProjectDir().'/var/log';
+		return $this->getProjectDir() . '/var/log';
 	}
 
 	public function registerBundles(): iterable
@@ -57,20 +57,20 @@ class Kernel extends BaseKernel
 
 	private function configureContainer( ContainerConfigurator $container, LoaderInterface $loader, ContainerBuilder $builder ): void
 	{
-		$confDir = $this->getProjectDir().'/config';
-		$loader->load( $confDir.'/config.yml' );
-		$loader->load( $confDir.'/framework.yml' );
-		$loader->load( $confDir.'/services.yml' );
+		$confDir = $this->getProjectDir() . '/config';
+		$loader->load( $confDir . '/config.yml' );
+		$loader->load( $confDir . '/framework.yml' );
+		$loader->load( $confDir . '/services.yml' );
 	}
 
 	private function configureRoutes( RoutingConfigurator $routes ): void
 	{
-		$confDir = $this->getProjectDir().'/config';
-		$routes->import( $confDir.'/routes.yml' );
+		$confDir = $this->getProjectDir() . '/config';
+		$routes->import( $confDir . '/routes.yml' );
 
 		if( $this->environment == 'dev' )
 		{
-			$routes->import( $confDir.'/dev/routes.yml' );
+			$routes->import( $confDir . '/dev/routes.yml' );
 		}
 	}
 }

@@ -188,7 +188,7 @@ class CommandLine implements System
 
 	public function getPathTree( Repository $repository, string $path, ?string $hash = 'HEAD' ): Tree
 	{
-		$path = rtrim( $path, '/' ).'/';
+		$path = rtrim( $path, '/' ) . '/';
 		$output = $this->run( [ 'ls-tree', '-lz', $hash, '--', $path ], $repository );
 		$tree = $this->buildTreeFromOutput( $repository, $hash, $output, true );
 		$tree->setName( rtrim( $path, '/' ) );
@@ -470,7 +470,7 @@ class CommandLine implements System
 
 	protected function parseCommitsDataXml( Repository $repository, string $input ): array
 	{
-		$items = new SimpleXMLElement( '<items>'.$input.'</items>' );
+		$items = new SimpleXMLElement( '<items>' . $input . '</items>' );
 		$commits = [];
 
 		foreach( $items as $item )

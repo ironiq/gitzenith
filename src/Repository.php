@@ -150,7 +150,7 @@ class Repository
 		$lineAccumulator = '';
 		foreach( $annotatedLines as $index => $currentLine )
 		{
-			$lineAccumulator .= $currentLine->getContents().PHP_EOL;
+			$lineAccumulator .= $currentLine->getContents() . PHP_EOL;
 			$nextLine = $annotatedLines[$index + 1] ?? null;
 
 			if( $nextLine && $currentLine->getCommit() != $nextLine->getCommit() )

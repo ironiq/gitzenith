@@ -48,16 +48,16 @@ class CommandLine implements System
 	{
 		$path = $repository->getPath();
 
-		return file_exists( $path ) && file_exists( $path.'/.hg' );
+		return file_exists( $path ) && file_exists( $path . '/.hg' );
 	}
 
 	public function getDescription( Repository $repository ): string
 	{
 		$path = $repository->getPath();
 
-		if( file_exists( $path.'/.hg/hgrc' ) )
+		if( file_exists( $path . '/.hg/hgrc' ) )
 		{
-			$hgrc = parse_ini_file( $path.'/.hg/hgrc' );
+			$hgrc = parse_ini_file( $path . '/.hg/hgrc' );
 
 			return $hgrc['description'] ?? '';
 		}
@@ -289,13 +289,13 @@ class CommandLine implements System
 		if( $criteria->getFrom() && !$criteria->getTo() )
 		{
 			$command[] = '--date';
-			$command[] = '>'.$criteria->getFrom()->format( self::MERCURIAL_DATE_FORMAT );
+			$command[] = '>' . $criteria->getFrom()->format( self::MERCURIAL_DATE_FORMAT );
 		}
 
 		if( !$criteria->getFrom() && $criteria->getTo() )
 		{
 			$command[] = '--date';
-			$command[] = '<'.$criteria->getTo()->format( self::MERCURIAL_DATE_FORMAT );
+			$command[] = '<' . $criteria->getTo()->format( self::MERCURIAL_DATE_FORMAT );
 		}
 
 		if( $criteria->getAuthor() )
@@ -352,7 +352,7 @@ class CommandLine implements System
 
 	protected function parseCommitDataXml( Repository $repository, string $input ): array
 	{
-		$items = new SimpleXMLElement( '<items>'.$input.'</items>' );
+		$items = new SimpleXMLElement( '<items>' . $input . '</items>' );
 		$commits = [];
 
 		foreach( $items as $item )
