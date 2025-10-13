@@ -51,6 +51,21 @@ class CommandLine implements System
 		return file_exists( $path ) && file_exists( $path . '/.hg' );
 	}
 
+	public function isValidBranch( Repository $repository, string $branch ): bool
+	{
+		return true;
+	}
+
+	public function isValidTag( Repository $repository, string $tag ): bool
+	{
+		return true;
+	}
+
+	public function isValidCommitId( Repository $repository, string $hash ): bool
+	{
+		return true;
+	}
+
 	public function getDescription( Repository $repository ): string
 	{
 		$path = $repository->getPath();
@@ -221,6 +236,16 @@ class CommandLine implements System
 	public function getSpecificCommits( Repository $repository, array $hashes ): array
 	{
 		$output = $this->run( [ 'log', self::DEFAULT_COMMIT_FORMAT, '-r', implode( ':', $hashes ) ], $repository );
+
+		return $this->parseCommitDataXml( $repository, $output );
+	}
+
+	public function getAllCommits( Repository $repository, ?string $hash = null ): array
+	{
+		$output = $this->run( [
+			'log',
+			self::DEFAULT_COMMIT_FORMAT,
+		], $repository );
 
 		return $this->parseCommitDataXml( $repository, $output );
 	}

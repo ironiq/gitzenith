@@ -4,11 +4,18 @@ declare( strict_types=1 );
 
 namespace GitZenith\SCM;
 
+use GitZenith\SCM\Repository;
 use GitZenith\SCM\Commit\Criteria;
 
 interface System
 {
 	public function isValidRepository( Repository $repository ): bool;
+
+	public function isValidBranch( Repository $repository, string $branch ): bool;
+
+	public function isValidTag( Repository $repository, string $tag ): bool;
+
+	public function isValidCommitId( Repository $repository, string $hash ): bool;
 
 	public function getDescription( Repository $repository ): string;
 
@@ -35,6 +42,8 @@ interface System
 	public function getCommitsFromPath( Repository $repository, string $path, ?string $hash = null, int $page = 1, int $perPage = 10 ): array;
 
 	public function getSpecificCommits( Repository $repository, array $hashes ): array;
+
+	public function getAllCommits( Repository $repository, ?string $hash = null ): array;
 
 	public function getBlame( Repository $repository, string $hash, string $path ): Blame;
 

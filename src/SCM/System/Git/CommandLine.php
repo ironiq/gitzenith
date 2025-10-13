@@ -44,11 +44,36 @@ class CommandLine implements System
 		$this->path = $path;
 	}
 
+	private function isCommitId( string $candidate ): bool
+	{
+		// Match full 40-char or short 7+ hex SHA
+		return (bool) preg_match( '/^[0-9a-f]{7,40}$/i', $candidate );
+	}
+
 	public function isValidRepository( Repository $repository ): bool
 	{
 		$path = $repository->getPath();
 
 		return file_exists( $path ) && ( file_exists( $path . '/.git/HEAD' ) || file_exists( $path . '/HEAD' ) );
+	}
+
+	public function isValidBranch( Repository $repository, string $branch ): bool
+	{
+		return $this->runCheck( ['show-ref', '--verify', '--quiet', 'refs/heads/' . $branch], $repository );
+	}
+
+	public function isValidTag( Repository $repository, string $tag ): bool
+	{
+		return $this->runCheck( ['show-ref', '--verify', '--quiet', 'refs/tags/' . $tag], $repository );
+	}
+
+	public function isValidCommitId( Repository $repository, string $hash ): bool
+	{
+		if( !$this->isCommitId( $hash ) )
+		{
+			return false;
+		}
+		return $this->runCheck( ['rev-parse', '--verify', $hash . '^{commit}'], $repository );
 	}
 
 	public function getDescription( Repository $repository ): string
@@ -218,7 +243,7 @@ class CommandLine implements System
 			'--skip',
 			( $page - 1 ) * $perPage,
 			'--max-count',
-			$page * $perPage,
+			$perPage,
 			self::DEFAULT_COMMIT_FORMAT,
 			$hash,
 		], $repository );
@@ -233,7 +258,7 @@ class CommandLine implements System
 			'--skip',
 			( $page - 1 ) * $perPage,
 			'--max-count',
-			$page * $perPage,
+			$perPage,
 			self::DEFAULT_COMMIT_FORMAT,
 			$hash,
 			'--',
@@ -246,6 +271,17 @@ class CommandLine implements System
 	public function getSpecificCommits( Repository $repository, array $hashes ): array
 	{
 		$output = $this->run( [ ...[ 'show', '-s', self::DEFAULT_COMMIT_FORMAT ], ...$hashes ], $repository );
+
+		return $this->parseCommitsDataXml( $repository, $output );
+	}
+
+	public function getAllCommits( Repository $repository, ?string $hash = 'HEAD' ): array
+	{
+		$output = $this->run( [
+			'log',
+			self::DEFAULT_COMMIT_FORMAT,
+			$hash,
+		], $repository );
 
 		return $this->parseCommitsDataXml( $repository, $output );
 	}
@@ -366,6 +402,22 @@ class CommandLine implements System
 		return $process->getOutput();
 	}
 
+	protected function runCheck( array $command, ?Repository $repository = null ): bool
+	{
+		array_unshift( $command, $this->path );
+
+		$process = new Process( $command );
+		$process->setTimeout( self::DEFAULT_TIMEOUT );
+
+		if( $repository )
+		{
+			$process->setWorkingDirectory( $repository->getPath() );
+		}
+
+		$process->run();
+		return $process->isSuccessful();
+	}
+
 	protected function buildTreeFromOutput( Repository $repository, string $hash, string $output, bool $fetchCommitInfo = false ): Tree
 	{
 		$lines = explode( "\0", $output );
@@ -445,7 +497,7 @@ class CommandLine implements System
 		return $root;
 	}
 
-	protected function getLatestCommitFromPath( Repository $repository, string $path, string $hash ): Commit
+	public function getLatestCommitFromPath( Repository $repository, string $path, string $hash ): Commit
 	{
 		$output = $this->run( [ 'log', '-n', 1, self::DEFAULT_COMMIT_FORMAT, $hash, '--', $path ], $repository );
 		$commits = $this->parseCommitDataXml( $repository, $output );
