@@ -9,7 +9,8 @@ tests/fixtures/hg-repo/.hg/cache
 tmp/
 *.sw?
 .env
-docker-compose.override.yml
+docker-compose.override.yml*
+!docker-compose.override.yml.dist
 npm-debug.log
 yarn-error.log
 .php_cs.cache
