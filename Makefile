@@ -2,73 +2,61 @@
 .DEFAULT_GOAL := help
 NAME := gitzenith
 VERSION := $(shell git show -s --format=%h)
-EXEC_DOCKER ?= docker compose exec -T
+DOCKER_COMPOSE ?= docker compose
+EXEC_DOCKER ?= $(DOCKER_COMPOSE) exec -T
 EXEC_PHP ?= $(EXEC_DOCKER) php-fpm
 EXEC_NODE ?= $(EXEC_DOCKER) node
 EXEC_WEB ?= $(EXEC_DOCKER) web
 
-# Display the application manual
-help:
-	@echo -e "$(NAME) version \033[33m$(VERSION)\n\e[0m"
-	@echo -e "\033[1;37mUSAGE\e[0m"
-	@echo -e "  \e[4mmake\e[0m <command> [<arg1>] ... [<argN>]\n"
-	@echo -e "\033[1;37mAVAILABLE COMMANDS\e[0m"
+help: # Display the application manual
+	@echo "$(NAME) version \033[33m$(VERSION)\n\e[0m"
+	@echo "\033[1;37mUSAGE\e[0m"
+	@echo "  \e[4mmake\e[0m <command> [<arg1>] ... [<argN>]\n"
+	@echo "\033[1;37mAVAILABLE COMMANDS\e[0m"
 	@grep -E '^[a-zA-Z_-]+:.*?# .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?# "}; {printf "  \033[32m%-20s\033[0m %s\n", $$1, $$2}'
 
 check-deps: check-local-overrides
-	@if ! docker compose --help >/dev/null; then\
-	  echo '\n\033[0;31mdocker compose is not installed.';\
+	@if ! [ -x "$$(command -v docker)" ]; then\
+	  echo '\n\033[0;31mdocker is not installed.';\
 	  exit 1;\
 	else\
-	  echo "\033[0;32mdocker compose installed\033[0m";\
+	  echo "\033[0;32mdocker installed\033[0m";\
 	fi
 
-# Setup dependencies and development configuration
-setup: check-deps
-	@docker compose pull || true
-	@docker compose up -d --build
+setup: check-deps # Setup dependencies and development configuration
+	$(DOCKER_COMPOSE) pull || true
+	$(DOCKER_COMPOSE) up -d --build
 	$(EXEC_PHP) git config --global --add safe.directory /application
 	$(EXEC_PHP) composer install
 
-# Update dependencies
-update: check-deps
-	@docker compose pull || true
-	@docker compose up -d --build
-	$(EXEC_PHP) git config --global --add safe.directory /application
-	$(EXEC_PHP) composer update
+up: # Create and start containers
+	$(DOCKER_COMPOSE) up -d
 
-# Create and start containers
-up:
-	@docker compose up -d
 
-# Cleanup containers and build artifacts
-clean:
-	@docker compose down
+clean: # Cleanup containers and build artifacts
+	$(DOCKER_COMPOSE) down
 	$(MAKE) setup
 
-# Start a bash session in the PHP container
-bash:
-	@docker compose exec php-fpm /bin/bash
+bash: # Start a bash session in the PHP container
+	$(EXEC_PHP) /bin/bash
 
-# Run automated test suite
-test:
+test: # Run automated test suite
 	$(EXEC_PHP) composer test
 	$(EXEC_NODE) npm run test
 
-# Run acceptance test suite
-acceptance:
+acceptance: # Run acceptance test suite
 	$(EXEC_NODE) npm run cypress
 
-# Open applicatipn in your browser
-show-app:
-	xdg-open http://$$(docker-compose port webserver 80)/
+show-app: # Open application in your browser
+	xdg-open http://$$(docker compose port webserver 80)/
 
-# Run code style autoformatter
-format:
+update: # Update dependencies
+	$(EXEC_PHP) composer update
+
+format: # Run code style autoformatter
 	$(EXEC_PHP) composer format
 
-# Build application package
-build:
+build: # Build application package
 	@rm -rf vendor/
 	@rm -rf public/assets/*
 	@composer install --ignore-platform-reqs --no-dev --no-scripts -o
@@ -76,18 +64,17 @@ build:
 	@zip ./build.zip \
 	-r * .[^.]* \
 	-x '.github/*' \
-	-x 'assets/*' \
 	-x 'bin/*' \
 	-x 'docker/*' \
 	-x 'node_modules/*' \
-	-x 'tests/*' \
+	-x 'tests/' \
 	-x 'var/cache/*' \
 	-x 'var/log/*' \
-	-x '.git/*' \
 	-x '.dockerignore' \
 	-x '.editorconfig' \
 	-x '.env' \
 	-x '.env.dist' \
+	-x '.git/*' \
 	-x '.gitignore'  \
 	-x '.php-cs-fixer.cache' \
 	-x '.php-cs-fixer.php' \
