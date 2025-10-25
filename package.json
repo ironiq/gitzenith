@@ -24,7 +24,7 @@
     "@symfony/webpack-encore": "^5.0",
     "autoprefixer": "^10.4",
     "cssnano": "^7.0",
-    "cypress": "^13.15",
+    "cypress": "^14.5.4",
     "file-loader": "^6.2",
     "husky": "^9.1",
     "postcss-loader": "^8.1",
@@ -34,7 +34,8 @@
     "sass-loader": "^16.0"
   },
   "browserslist": [
-    "> 1%",
-    "IE 10"
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
   ]
 }
