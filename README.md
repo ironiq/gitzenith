@@ -17,6 +17,8 @@ GitZenith is an elegant and modern web interface for interacting with multiple g
 In order to run GitZenith on your server, you'll need:
 
 * PHP 8.2
+  * php-xml
+  * php-mbstring
 * git 2
 * Webserver (Apache, nginx)
 
