@@ -15,7 +15,7 @@ help: # Display the application manual
 	@echo "\033[1;37mAVAILABLE COMMANDS\e[0m"
 	@grep -E '^[a-zA-Z_-]+:.*?# .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?# "}; {printf "  \033[32m%-20s\033[0m %s\n", $$1, $$2}'
 
-check-deps: check-local-overrides
+check-deps: # check-local-overrides
 	@if ! [ -x "$$(command -v docker)" ]; then\
 	  echo '\n\033[0;31mdocker is not installed.';\
 	  exit 1;\
@@ -32,9 +32,11 @@ setup: check-deps # Setup dependencies and development configuration
 up: # Create and start containers
 	$(DOCKER_COMPOSE) up -d
 
+down: # Cleanup containers
+	$(DOCKER_COMPOSE) down
 
 clean: # Cleanup containers and build artifacts
-	$(DOCKER_COMPOSE) down
+	@$(MAKE) --quiet down
 	$(MAKE) setup
 
 bash: # Start a bash session in the PHP container
@@ -62,31 +64,38 @@ build: # Build application package
 	@composer install --ignore-platform-reqs --no-dev --no-scripts -o
 	@npm run build
 	@zip ./build.zip \
-	-r * .[^.]* \
+	-r . \
+	-x '.cache/*' \
+	-x '.git/*' \
 	-x '.github/*' \
+	-x '.phpunit.cache/*' \
+	-x '.vscode/*' \
+	-x 'assets/*' \
 	-x 'bin/*' \
+	-x 'config/dev/*' \
 	-x 'docker/*' \
+	-x 'docs/*' \
 	-x 'node_modules/*' \
-	-x 'tests/' \
+	-x 'tests/*' \
+	-x 'tmp/*' \
 	-x 'var/cache/*' \
 	-x 'var/log/*' \
 	-x '.dockerignore' \
 	-x '.editorconfig' \
-	-x '.env' \
-	-x '.env.dist' \
-	-x '.git/*' \
+	-x '.env.*' \
 	-x '.gitignore'  \
 	-x '.php-cs-fixer.cache' \
 	-x '.php-cs-fixer.php' \
+	-x '.phpactor.json' \
 	-x '.phpunit.result.cache' \
 	-x '.prettierrc' \
 	-x 'composer.json' \
 	-x 'composer.lock' \
 	-x 'crowdin.yml' \
+	-x 'cypress.config.js' \
 	-x 'cypress.yml' \
 	-x 'cypress.json' \
-	-x 'docker-compose.override.yml' \
-	-x 'docker-compose.override.yml.dist' \
+	-x 'docker-compose.override.yml*' \
 	-x 'docker-compose.yml' \
 	-x 'Makefile' \
 	-x 'package-lock.json' \
