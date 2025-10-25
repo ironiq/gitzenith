@@ -1,19 +1,22 @@
-public/bundles/
+# Directories
 public/assets/
+public/bundles/
+node_modules/
 var/
 vendor/
-node_modules/
-tests/fixtures/hg-repo/.hg/cache
 .cache/
 .phpunit.cache/
 tmp/
+
+# Files
 *.sw?
-.env
+.env.*
+.php_cs.cache
+.php-cs-fixer.cache
+.phpunit.result.cache
+phpunit.xml
 docker-compose.override.yml*
 !docker-compose.override.yml.dist
 npm-debug.log
+tests/fixtures/hg-repo/.hg/cache
 yarn-error.log
-.php_cs.cache
-.phpunit.result.cache
-.php-cs-fixer.cache
-phpunit.xml
