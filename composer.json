@@ -9,7 +9,7 @@
     "ext-iconv": "*",
     "ext-mbstring": "*",
     "league/commonmark": "^2.7",
-    "nesbot/carbon": "^3.9",
+    "nesbot/carbon": "^3.10",
     "symfony/asset": "^6.4",
     "symfony/cache": "^6.4",
     "symfony/clock": "^6.4",
@@ -22,7 +22,7 @@
     "symfony/templating": "^6.4",
     "symfony/translation": "^6.4",
     "symfony/twig-bundle": "^6.4",
-    "symfony/webpack-encore-bundle": "^2.1",
+    "symfony/webpack-encore-bundle": "^2.3",
     "symfony/yaml": "^6.4",
     "symfony/config": "^6.4",
     "symfony/cache-contracts": "^3.5",
@@ -53,7 +53,7 @@
     "symfony/translation-contracts": "^3.5"
   },
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "^3.75",
+    "friendsofphp/php-cs-fixer": "^3.86",
     "phpspec/prophecy-phpunit": "^2.0",
     "phpstan/phpstan": "^1.12",
     "phpunit/phpunit": "^11.5",
