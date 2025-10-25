@@ -24,7 +24,7 @@ RUN set -x; \
         xsl \
         zip \
     && printf "\n" | pecl install apcu xdebug \
-    && docker-php-ext-enable apcu \
+    && docker-php-ext-enable apcu xdebug \
     && apk del .php-extensions-build-dependencies
 
 RUN apk add --no-cache \
