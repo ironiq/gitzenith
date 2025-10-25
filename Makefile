@@ -104,6 +104,7 @@ build: # Build application package
 	-x 'phpunit.xml.dist' \
 	-x 'postcss.config.js' \
 	-x 'webpack.config.js'
+	@zip ./build.zip var/cache var/log
 
 fix-perms:
 	sudo setfacl -R -m u:root:rwX -m u:`whoami`:rwX var/cache var/log vendor/
