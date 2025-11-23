@@ -18,10 +18,10 @@ help: # Display the application manual
 
 check-deps: # check-local-overrides
 	@if ! [ -x "$$(command -v docker)" ]; then\
-	  echo '\n\033[0;31mdocker is not installed.';\
-	  exit 1;\
+		echo '\n\033[0;31mdocker is not installed.';\
+		exit 1;\
 	else\
-	  echo "\033[0;32mdocker installed\033[0m";\
+		echo "\033[0;32mdocker installed\033[0m";\
 	fi
 
 setup: check-deps # Setup dependencies and development configuration
@@ -118,11 +118,11 @@ fix-perms:
 	sudo setfacl -dR -m u:root:rwx -m u:`whoami`:rwx var/cache var/log vendor/
 
 check-local-overrides:
-	@$(MAKE) --quiet .env
+	# @$(MAKE) --quiet .env
 	@$(MAKE) --quiet docker-compose.override.yml
-
-docker-compose.override.yml:
-	@ln -s --backup=none docker-compose.override.yml.dist $@
 
 .env:
 	@ln -s --backup=none .env.dist $@
+
+docker-compose.override.yml:
+	@ln -s --backup=none docker-compose.override.yml.dist $@
