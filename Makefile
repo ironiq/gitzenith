@@ -3,10 +3,11 @@
 NAME := gitzenith
 VERSION := $(shell git show -s --format=%h)
 DOCKER_COMPOSE ?= docker compose
-EXEC_DOCKER ?= $(DOCKER_COMPOSE) exec -T
-EXEC_PHP ?= $(EXEC_DOCKER) php-fpm
-EXEC_NODE ?= $(EXEC_DOCKER) node
-EXEC_WEB ?= $(EXEC_DOCKER) web
+EXEC_DOCKER ?= $(DOCKER_COMPOSE) exec
+EXEC_DOCKER_NOTTY ?= $(EXEC_DOCKER) -T
+EXEC_PHP ?= $(EXEC_DOCKER_NOTTY) php-fpm
+EXEC_NODE ?= $(EXEC_DOCKER_NOTTY) node
+EXEC_WEB ?= $(EXEC_DOCKER_NOTTY) web
 
 help: # Display the application manual
 	@echo "$(NAME) version \033[33m$(VERSION)\n\e[0m"
@@ -39,8 +40,11 @@ clean: # Cleanup containers and build artifacts
 	@$(MAKE) --quiet down
 	$(MAKE) setup
 
-bash: # Start a bash session in the PHP container
-	$(EXEC_PHP) /bin/bash
+bash-php: # Start a bash session in the PHP container
+	$(EXEC_DOCKER) php-fpm /bin/bash
+
+bash-node: # Start a bash session in the PHP container
+	$(EXEC_DOCKER) node /bin/bash
 
 test: # Run automated test suite
 	$(EXEC_PHP) composer test
@@ -52,8 +56,11 @@ acceptance: # Run acceptance test suite
 show-app: # Open application in your browser
 	xdg-open http://$$(docker compose port webserver 80)/
 
-update: # Update dependencies
+update-php: # Update dependencies
 	$(EXEC_PHP) composer update
+
+update-node: # Update dependencies
+	$(EXEC_NODE) npm update
 
 format: # Run code style autoformatter
 	$(EXEC_PHP) composer format
