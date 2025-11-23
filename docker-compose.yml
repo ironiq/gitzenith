@@ -1,3 +1,6 @@
+volumes:
+  var-cache-volume:
+
 services:
   node:
     build:
@@ -15,13 +18,15 @@ services:
       - php-fpm
     working_dir: /application
     volumes:
-      - .:/application
+      - .:/application:cached
 
   php-fpm:
     build:
       context: docker/php-fpm/
     working_dir: /application
     volumes:
-      - .:/application
+      - .:/application:cached
+      - var-cache-volume:/application/var/cache
+      - $HOME/.composer:/root/.composer/:cached
     extra_hosts:
       - "host.docker.internal:host-gateway"
