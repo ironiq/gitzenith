@@ -6,7 +6,8 @@ DOCKER_COMPOSE ?= docker compose
 EXEC_DOCKER ?= $(DOCKER_COMPOSE) exec
 EXEC_DOCKER_NOTTY ?= $(EXEC_DOCKER) -T
 EXEC_PHP ?= $(EXEC_DOCKER_NOTTY) php-fpm
-EXEC_WEB ?= $(EXEC_DOCKER_NOTTY) webserver
+EXEC_NODE ?= $(EXEC_DOCKER_NOTTY) node
+EXEC_WEB ?= $(EXEC_DOCKER_NOTTY) web
 
 help: # Display the application manual
 	@echo "$(NAME) version \033[33m$(VERSION)\n\e[0m"
