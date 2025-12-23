@@ -1,6 +1,8 @@
 # GitZenith configuration
 
 parameters:
+  siteurl: git.ironiq.hu
+
   # Web application title
   title: GitZenith
 
@@ -56,10 +58,10 @@ parameters:
   commit_group_date_format: 'F j, Y'
   commit_list_date_format: 'Y-m-d H:i:s'
 
-  ssh_clone_url: 'git@git.ironiq.hu:%s.git' # %s will be replaced by the repository name
-  https_clone_url: 'https://git.ironiq.hu/%s.git' # %s will be replaced by the repository name
+  ssh_clone_url: 'git@%siteurl%:%s.git' # %s will be replaced by the repository name
+  https_clone_url: 'https://%siteurl%/%s.git' # %s will be replaced by the repository name
 
   # Route validators
   valid_repository_name: '[a-zA-Z0-9\_\.\-]+'
-  #valid_commitish_format: '.+'
+  # valid_commitish_format: '.+'
   valid_commitish_format: '[a-zA-Z0-9\_\.\-\/]+'
