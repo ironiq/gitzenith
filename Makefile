@@ -16,7 +16,7 @@ help: # Display the application manual
 	@echo "\033[1;37mAVAILABLE COMMANDS\e[0m"
 	@grep -E '^[a-zA-Z_-]+:.*?# .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?# "}; {printf "  \033[32m%-20s\033[0m %s\n", $$1, $$2}'
 
-check-deps: # check-local-overrides
+check-deps:
 	@if ! [ -x "$$(command -v docker)" ]; then\
 		echo '\n\033[0;31mdocker is not installed.';\
 		exit 1;\
@@ -117,12 +117,3 @@ fix-perms:
 	sudo setfacl -R -m u:root:rwX -m u:`whoami`:rwX var/cache var/log vendor/
 	sudo setfacl -dR -m u:root:rwx -m u:`whoami`:rwx var/cache var/log vendor/
 
-check-local-overrides:
-	# @$(MAKE) --quiet .env
-	@$(MAKE) --quiet docker-compose.override.yml
-
-.env:
-	@ln -s --backup=none .env.dist $@
-
-docker-compose.override.yml:
-	@ln -s --backup=none docker-compose.override.yml.dist $@
