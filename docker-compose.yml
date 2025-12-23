@@ -19,6 +19,8 @@ services:
     working_dir: /application
     volumes:
       - .:/application:cached
+    ports:
+      - '8880:80'
 
   php-fpm:
     build:

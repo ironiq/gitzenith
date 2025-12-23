@@ -1,11 +1,4 @@
-volumes:
-  var-cache-volume:
-
 services:
-  webserver:
-    ports:
-      - '8880:80'
-
   php-fpm:
     volumes:
       - /var/www/gitrepos:/var/repositories
