@@ -4,14 +4,13 @@ declare( strict_types=1 );
 
 namespace GitZenith\SCM;
 
-use GitZenith\SCM\Repository;
 use GitZenith\SCM\Commit\Criteria;
 
 interface System
 {
 	public function isValidRepository( Repository $repository ): bool;
 
-	public function isValidBranch( Repository $repository, string $branch ): bool;
+	public function isValidBranch( Repository $repository, string $branch ): ?bool;
 
 	public function isValidTag( Repository $repository, string $tag ): bool;
 

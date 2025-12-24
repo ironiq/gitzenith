@@ -1,16 +1,16 @@
 <div class="dropdown">
   <a class="btn btn-secondary dropdown-toggle" role="button" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside">
-    <i class="icon ion-md-git-branch"></i> {{ shortref }}
+    <i class="icon ion-md-git-branch"></i> <strong>{{ 'REPOSITORY_REFLIST_TOGGLE'|trans }}</strong> {{ ref }}
   </a>
   <div class="dropdown-menu ref-list">
     <div class="input-group">
       <input type="text" list="refs" class="form-control" placeholder="{{ 'REPOSITORY_REFLIST_PLACEHOLDER'|trans }}">
       <datalist id="refs">
         {% for branch in repository.branches %}
-          <option value="{{ branch.name }}" data-target="{{ path(path, {repository: repository.name, commitish: getCommitish(branch.name, refPath) }) }}">
+          <option value="{{ branch.name }}" data-target="{{ path(path, {repo: repository.name, commitish: getCommitish(branch.name, refPath) }) }}">
         {% endfor %}
         {% for tag in repository.tags %}
-          <option value="{{ tag.name }}" data-target="{{ path(path, {repository: repository.name, commitish: getCommitish(tag.name, refPath) }) }}">
+          <option value="{{ tag.name }}" data-target="{{ path(path, {repo: repository.name, commitish: getCommitish(tag.name, refPath) }) }}">
         {% endfor %}
       </datalist>
     </div>
@@ -32,7 +32,7 @@
         <ul class="list-group list-group-flush">
         {% if hasBranches %}
           {% for branch in repository.branches %}
-            <a class="list-group-item list-group-item-action" href="{{ path(path, {repository: repository.name, commitish: getCommitish(branch.name, refPath) }) }}" title="{{ branch.name }}">{{ branch.name }}</a>
+            <a class="list-group-item list-group-item-action" href="{{ path(path, {repo: repository.name, commitish: getCommitish(branch.name, refPath) }) }}" title="{{ branch.name }}">{{ branch.name }}</a>
           {% endfor %}
         {% endif %}
         </ul>
@@ -41,7 +41,7 @@
         <ul class="list-group list-group-flush">
           {% if hasTags %}
             {% for tag in repository.tags %}
-              <a class="list-group-item list-group-item-action" href="{{ path(path, {repository: repository.name, commitish: getCommitish(tag.name, refPath) }) }}" title="{{ tag.name }}">{{ tag.name }}</a>
+              <a class="list-group-item list-group-item-action" href="{{ path(path, {repo: repository.name, commitish: getCommitish(tag.name, refPath) }) }}" title="{{ tag.name }}">{{ tag.name }}</a>
             {% endfor %}
           {% endif %}
         </ul>

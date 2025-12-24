@@ -21,7 +21,7 @@
 
           <div class="btn-group" role="group">
             {% if commit.firstParent.hash %}
-              <a href="{{ path('commit_show', { repository: repository.name, commitish: commit.firstParent.hash }) }}" class="btn btn-secondary">
+              <a href="{{ path('commit_show', { repo: repository.name, commitish: commit.firstParent.hash }) }}" class="btn btn-secondary">
                 <i class="icon ion-md-git-commit"></i> {{ 'REPOSITORY_COMMIT_PARENT'|trans }} {{ commit.firstParent.shortHash }}
               </a>
             {% endif %}
@@ -65,12 +65,12 @@
               <a id="diff-{{ loop.index }}"><i class="icon ion-md-document"></i> {{ file.name }}</a>
               <div class="btn-group" role="group">
                 {% if file.type == 'deleted' %}
-                  <a href="{{ path('blob_show', { repository: repository.name, commitish: getCommitish(commit.firstParent.hash, file.name) }) }}" class="btn btn-secondary">
-                    {{ 'REPOSITORY_COMMIT_VIEW_FILE_AT'|trans }} {{ commit.firstParent.shortHash }}
+                  <a href="{{ path('blob_show', { repo: repository.name, commitish: getCommitish(commit.firstParent.hash, file.name) }) }}" class="btn btn-secondary">
+                    {{ 'REPOSITORY_COMMIT_VIEW_FILE_AT' | trans }} {{ commit.firstParent.shortHash }}
                   </a>
                 {% else %}
-                  <a href="{{ path('blob_show', { repository: repository.name, commitish: getCommitish(commit.hash, file.name) }) }}" class="btn btn-secondary">
-                    {{ 'REPOSITORY_COMMIT_VIEW_FILE_AT'|trans }} {{ commit.shortHash }}
+                  <a href="{{ path('blob_show', { repo: repository.name, commitish: getCommitish(commit.hash, file.name) }) }}" class="btn btn-secondary">
+                    {{ 'REPOSITORY_COMMIT_VIEW_FILE_AT' | trans }} {{ commit.shortHash }}
                   </a>
                 {% endif %}
               </div>

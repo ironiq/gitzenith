@@ -5,7 +5,11 @@
 {% endblock %}
 
 {% block search %}
-  {% include 'search.html.twig' with { repository: repository, commitish: repository.defaultBranch } %}
+  {% if repository.branches|length > 0 %}
+    {% include 'search.html.twig' with { repository: repository, commitish: repository.defaultBranch } %}
+  {% else %}
+    <div class="ms-auto">&nbsp;</div>
+  {% endif %}
 {% endblock %}
 
 {% block body %}
@@ -22,13 +26,13 @@
             <li class="list-group-item">
               <h5>
                 <i class="icon ion-md-git-branch"></i>
-                <a href="{{ path('repository_tree', {repository: repository.name, commitish: branch.name }) }}" title="{{ branch.name }}">
+                <a href="{{ path('repository_tree', {repo: repository.name, commitish: branch.name }) }}" title="{{ branch.name }}">
                   {{ branch.name }}
                 </a>
               </h5>
               <p>
                 <i class="icon ion-md-git-commit"></i>
-                <a href="{{ path('commit_show', { repository: repository.name, commitish: branch.target.hash }) }}">{{ branch.target.shortHash }}</a>
+                <a href="{{ path('commit_show', { repo: repository.name, commitish: branch.target.hash }) }}">{{ branch.target.shortHash }}</a>
                 {{ branch.target.subject }}
                 <span class="badge badge-secondary">
                   {{ branch.target.commitedAt|date(commit_list_date_format) }}

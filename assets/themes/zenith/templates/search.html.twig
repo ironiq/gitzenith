@@ -1,4 +1,4 @@
-<form class="ms-auto form-inline" action="{{ path('repository_search_commits_action', {repository: repository.name, commitish: commitish}) }}" method="post">
+<form class="ms-auto form-inline" action="{{ path( 'repository_search_commits_action', { repo: repository.name, commitish: commitish } ) }}" method="post">
   <div class="input-group">
     <input type="text" name="query" class="form-control" placeholder="{{ 'REPOSITORY_MENU_SEARCH_PLACEHOLDER'|trans }}">
     <div class="input-group-append">

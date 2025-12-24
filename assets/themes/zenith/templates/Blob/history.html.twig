@@ -33,13 +33,13 @@
   <nav aria-label="{{ 'REPOSITORY_COMMITS_NAV_TITLE'|trans }}">
     <ul class="pagination justify-content-center">
       <li class="page-item{{ page == 1 ? ' disabled' }}">
-        <a class="page-link" href="{{ path('blob_history', { repository: repository.name, commitish: commitish, page: previousPage }) }}" aria-label="{{ 'REPOSITORY_COMMITS_NAV_NEWER'|trans }}">
+        <a class="page-link" href="{{ path('blob_history', { repo: repository.name, commitish: commitish, page: previousPage }) }}" aria-label="{{ 'REPOSITORY_COMMITS_NAV_NEWER'|trans }}">
           <span aria-hidden="true">&laquo;</span>
           <span>{{ 'REPOSITORY_COMMITS_NAV_NEWER'|trans }}</span>
         </a>
       </li>
       <li class="page-item{{ commitGroups|length == 0 ? ' disabled' }}">
-        <a class="page-link" href="{{ path('blob_history', { repository: repository.name, commitish: commitish, page: nextPage }) }}" aria-label="{{ 'REPOSITORY_COMMITS_NAV_OLDER'|trans }}">
+        <a class="page-link" href="{{ path('blob_history', { repo: repository.name, commitish: commitish, page: nextPage }) }}" aria-label="{{ 'REPOSITORY_COMMITS_NAV_OLDER'|trans }}">
           <span>{{ 'REPOSITORY_COMMITS_NAV_OLDER'|trans }}</span>
           <span aria-hidden="true">&raquo;</span>
         </a>

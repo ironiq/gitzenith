@@ -57,23 +57,42 @@ class CommandLine implements System
 		return file_exists( $path ) && ( file_exists( $path . '/.git/HEAD' ) || file_exists( $path . '/HEAD' ) );
 	}
 
-	public function isValidBranch( Repository $repository, string $branch ): bool
+	public function isValidBranch( Repository $repository, string $branch = '' ): ?bool
 	{
-		return $this->runCheck( ['show-ref', '--verify', '--quiet', 'refs/heads/' . $branch], $repository );
+		if( $branch === '' )
+		{
+			return false;
+		}
+
+		return (bool) $this->runCheck( ['show-ref', '--verify', '--quiet', 'refs/heads/' . $branch], $repository );
 	}
 
-	public function isValidTag( Repository $repository, string $tag ): bool
+	public function isValidTag( Repository $repository, string $tag = '' ): bool
 	{
-		return $this->runCheck( ['show-ref', '--verify', '--quiet', 'refs/tags/' . $tag], $repository );
+		if( $tag === '' )
+		{
+			return false;
+		}
+		if( $this->runCheck( ['show-ref', '--verify', '--quiet', 'refs/tags/' . $tag], $repository ) )
+		{
+			return true;
+		}
+
+		return false;
 	}
 
-	public function isValidCommitId( Repository $repository, string $hash ): bool
+	public function isValidCommitId( Repository $repository, string $hash = '' ): bool
 	{
+		if( $hash === '' )
+		{
+			return false;
+		}
 		if( !$this->isCommitId( $hash ) )
 		{
 			return false;
 		}
-		return $this->runCheck( ['rev-parse', '--verify', $hash . '^{commit}'], $repository );
+
+		return (bool) $this->runCheck( ['rev-parse', '--verify', $hash . '^{commit}'], $repository );
 	}
 
 	public function getDescription( Repository $repository ): string
@@ -414,8 +433,16 @@ class CommandLine implements System
 			$process->setWorkingDirectory( $repository->getPath() );
 		}
 
-		$process->run();
-		return $process->isSuccessful();
+		try
+		{
+			$process->mustRun();
+		}
+		catch( ProcessFailedException $exception )
+		{
+			return false;
+		}
+
+		return (bool) $process->isSuccessful();
 	}
 
 	protected function buildTreeFromOutput( Repository $repository, string $hash, string $output, bool $fetchCommitInfo = false ): Tree

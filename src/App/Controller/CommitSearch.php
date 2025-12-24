@@ -11,10 +11,11 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\RouterInterface;
 // use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 // use Symfony\Component\HttpFoundation\Session\Session;
 // use Symfony\Component\HttpFoundation\Session\FlashBagInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
 
 class CommitSearch
@@ -23,9 +24,14 @@ class CommitSearch
 	{
 	}
 
-	public function createForm( string $repository, string $commitish ): Response
+	#[Route(
+		'/{repo}/search/commits/{commitish}',
+		name: 'repository_search_commits',
+		requirements: [ 'repo' => '%valid_repository_name%', 'commitish' => '%valid_commitish_format%' ],
+	)]
+	public function createForm( string $repo, string $commitish ): Response
 	{
-		$repository = $this->index->getRepository( $repository );
+		$repository = $this->index->getRepository( $repo );
 		$form = $this->formFactory->create( CriteriaType::class, new Criteria() );
 
 		return new Response( $this->templating->render( 'Search/form.html.twig', [
@@ -35,21 +41,33 @@ class CommitSearch
 		] ) );
 	}
 
-	public function showResults( Request $request, string $repository, string $commitish ): Response
+	#[Route(
+		'/{repo}/search/commits/{commitish}',
+		name: 'repository_search_commits_action',
+		requirements: [ 'repo' => '%valid_repository_name%', 'commitish' => '%valid_commitish_format%' ],
+	)]
+	public function showResults( Request $request, string $repo, string $commitish ): Response
 	{
 		$criteria = new Criteria();
-		$criteria->setMessage( $request->request->get( 'query', '' ) );
+		$mes = $request->request->get( 'query', '' );
+		$mes = ( $mes === '' ) ? null : strval( $mes );
+		$criteria->setMessage( $mes );
 
 		$form = $this->formFactory->create( CriteriaType::class, $criteria );
 		$form->handleRequest( $request );
 
 		if ( $form->isSubmitted() && !$form->isValid() )
 		{
-			foreach( $form->getErrors( true ) as $error )
-			{
-				/* @disregard P1013 false positive */
-				$request->getSession()->getFlashBag()->add( 'danger', $error->getMessage() );
-			}
+			dd( $form->getErrors( true ) );
+			// $session = $request->getSession();
+			// foreach( $form->getErrors( true ) as $error )
+			// {
+			// 	/* @disregard P1013 false positive */
+			// 	if ($session instanceof FlashBagAwareSessionInterface)
+			// 	{
+			// 		$session->getFlashBag()->add( 'danger', $error->getMessage() );
+			// 	}
+			// }
 
 			return new RedirectResponse( $this->router->generate( 'repository_tree', [
 				'repository' => $repository,
@@ -57,7 +75,7 @@ class CommitSearch
 			] ) );
 		}
 
-		$repository = $this->index->getRepository( $repository );
+		$repository = $this->index->getRepository( $repo );
 		$commits = $repository->searchCommits( $form->getData(), $commitish );
 		$commitGroups = [];
 

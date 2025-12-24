@@ -5,7 +5,7 @@
         <img src="{{ getAvatar(commit.author.email, 32) }}" class="rounded me-2" alt="{{ commit.author.name }}" />
 
         <div class="me-auto">
-          <a href="{{ path('commit_show', { repository: repository.name, commitish: commit.hash }) }}">{{ commit.subject }}</a>
+          <a href="{{ path('commit_show', { repo: repository.name, commitish: commit.hash }) }}">{{ commit.subject }}</a>
 
           {% if commit.body %}
             <button type="button" class="btn btn-sm btn-secondary" data-bs-container="body" data-toggle="commit-body" data-bs-placement="bottom" data-bs-content="{{ commit.body }}">...</button>
@@ -15,11 +15,11 @@
           </p>
         </div>
         <div>
-          <a href="{{ path('commit_show', { repository: repository.name, commitish: commit.hash }) }}" class="btn btn-secondary" title="View commit details">
+          <a href="{{ path('commit_show', { repo: repository.name, commitish: commit.hash }) }}" class="btn btn-secondary" title="View commit details">
             <i class="icon ion-md-git-commit"></i>
             {{ commit.shortHash }}
           </a>
-          <a href="{{ path('repository_tree', { repository: repository.name, commitish: commit.hash }) }}" class="btn btn-secondary" title="{{ 'REPOSITORY_BROWSE_AT_COMMIT'|trans }} {{ commit.shortHash }}">
+          <a href="{{ path('repository_tree', { repo: repository.name, commitish: commit.hash }) }}" class="btn btn-secondary" title="{{ 'REPOSITORY_BROWSE_AT_COMMIT'|trans }} {{ commit.shortHash }}">
             <i class="icon icon-solo ion-md-code"></i>
           </a>
         </div>

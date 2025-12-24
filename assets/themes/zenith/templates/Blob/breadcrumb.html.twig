@@ -4,7 +4,7 @@
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="{{ path('repository_tree', {repository: repository.name, commitish: longref }) }}">{{ repository.name }}</a>
+        <a href="{{ path('repository_tree', {repo: repository.name, commitish: longref }) }}">{{ repository.name }}</a>
       </li>
       {% for breadcrumb in getBreadcrumbs(blob) %}
         {% if loop.last %}
@@ -13,7 +13,7 @@
           </li>
         {% else %}
           <li class="breadcrumb-item">
-            <a href="{{ path('repository_tree', {repository: repository.name, commitish: breadcrumb.commitish }) }}">{{ breadcrumb.name }}</a>
+            <a href="{{ path('repository_tree', {repo: repository.name, commitish: breadcrumb.commitish }) }}">{{ breadcrumb.name }}</a>
           </li>
         {% endif %}
       {% endfor %}

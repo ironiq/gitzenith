@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block search %}
-  {% include 'search.html.twig' with { repository: repository, commitish: tree.hash } %}
+  {% include 'search.html.twig' with { repository: repository, commitish: repository.defaultBranch } %}
 {% endblock %}
 
 {% block body %}
@@ -36,7 +36,7 @@
 
   <div class="row module-row">
     <div class="col-4">
-      {% include 'reflist.html.twig' with { ref: shortref, refPath: '', path: 'repository_tree', repository: repository } %}
+      {% include 'reflist.html.twig' with { ref: ref, refPath: '', path: 'repository_tree', repository: repository } %}
     </div>
     <div class="col-8">
       <div class="btn-toolbar justify-content-end">
@@ -61,10 +61,10 @@
         </div>
 
         <div class="btn-group" role="group">
-          <a href="{{ path('repository_feed', { repository: repository.name, commitish: tree.hash, format: 'rss' }) }}" class="btn btn-secondary">
+          <a href="{{ path('repository_feed', { repo: repository.name, commitish: tree.hash, format: 'rss' }) }}" class="btn btn-secondary">
             {{ 'REPOSITORY_TOOLBAR_FEED_RSS'|trans }}
           </a>
-          <a href="{{ path('repository_feed', { repository: repository.name, commitish: tree.hash, format: 'atom' }) }}" class="btn btn-secondary">
+          <a href="{{ path('repository_feed', { repo: repository.name, commitish: tree.hash, format: 'atom' }) }}" class="btn btn-secondary">
             {{ 'REPOSITORY_TOOLBAR_FEED_ATOM'|trans }}
           </a>
 
@@ -73,13 +73,13 @@
               {{ 'REPOSITORY_TOOLBAR_DOWNLOAD'|trans }}
             </a>
             <div class="dropdown-menu">
-              <a class="dropdown-item" href="{{ path('repository_archive', { repository: repository.name, commitish: tree.hash, format: 'zip' }) }}">
+              <a class="dropdown-item" href="{{ path('repository_archive', { repo: repository.name, commitish: tree.hash, format: 'zip' }) }}">
                 {{ 'REPOSITORY_TOOLBAR_DOWNLOAD_ZIP'|trans }}
               </a>
-              <a class="dropdown-item" href="{{ path('repository_archive', { repository: repository.name, commitish: tree.hash, format: 'tar' }) }}">
+              <a class="dropdown-item" href="{{ path('repository_archive', { repo: repository.name, commitish: tree.hash, format: 'tar' }) }}">
                 {{ 'REPOSITORY_TOOLBAR_DOWNLOAD_TAR'|trans }}
               </a>
-              <a class="dropdown-item" href="{{ path('repository_archive', { repository: repository.name, commitish: tree.hash, format: 'tar.gz' }) }}">
+              <a class="dropdown-item" href="{{ path('repository_archive', { repo: repository.name, commitish: tree.hash, format: 'tar.gz' }) }}">
                 {{ 'REPOSITORY_TOOLBAR_DOWNLOAD_TAR_GZ'|trans }}
               </a>
             </div>
@@ -109,7 +109,7 @@
                 <th scope="row" class="tree-filename">
                   <span class="tree-truncate">
                     <i class="icon ion-md-folder"></i>
-                    <a href="{{ path('repository_tree', {repository: repository.name, commitish: getCommitish(tree.hash, getParent(tree.name)) }) }}">
+                    <a href="{{ path('repository_tree', {repo: repository.name, commitish: getCommitish(tree.hash, getParent(tree.name)) }) }}">
                       ..
                     </a>
                   </span>
@@ -129,7 +129,7 @@
                 <th scope="row" class="tree-filename">
                   <span class="tree-truncate">
                     <i class="icon ion-md-folder"></i>
-                    <a href="{{ path('repository_tree', {repository: repository.name, commitish: getCommitish(longref, object.name) }) }}" title="{{ object.fileName }}">
+                    <a href="{{ path('repository_tree', {repo: repository.name, commitish: getCommitish(longref, object.name) }) }}" title="{{ object.fileName }}">
                       {{ object.fileName }}
                     </a>
                   </span>
@@ -141,7 +141,7 @@
                   <td class="tree-commit">
                     {% if object.firstParent.isCommit %}
                       <span class="tree-truncate">
-                        <a href="{{ path('commit_show', { repository: repository.name, commitish: object.firstParent.hash }) }}" title="{{ object.firstParent.subject }}">
+                        <a href="{{ path('commit_show', { repo: repository.name, commitish: object.firstParent.hash }) }}" title="{{ object.firstParent.subject }}">
                           {{ object.firstParent.subject }}
                         </a>
                       </span>
@@ -161,7 +161,7 @@
                 <th scope="row" class="tree-filename">
                   <span class="tree-truncate">
                     <i class="icon ion-md-document"></i>
-                    <a href="{{ path('blob_show', {repository: repository.name, commitish: getCommitish(longref, object.name) }) }}" title="{{ object.fileName }}">
+                    <a href="{{ path('blob_show', {repo: repository.name, commitish: getCommitish(longref, object.name) }) }}" title="{{ object.fileName }}">
                       {{ object.fileName }}
                     </a>
                   </span>
@@ -175,7 +175,7 @@
                   <td class="tree-commit">
                     {% if object.firstParent.isCommit %}
                       <span class="tree-truncate">
-                        <a href="{{ path('commit_show', { repository: repository.name, commitish: object.firstParent.hash }) }}" title="{{ object.firstParent.subject }}">
+                        <a href="{{ path('commit_show', { repo: repository.name, commitish: object.firstParent.hash }) }}" title="{{ object.firstParent.subject }}">
                           {{ object.firstParent.subject }}
                         </a>
                       </span>

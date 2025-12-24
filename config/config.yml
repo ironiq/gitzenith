@@ -37,7 +37,8 @@ parameters:
   commits_per_page: 10
 
   # Blob viewer: simple, codemirror or ace
-  default_blob_viewer: ace
+  # default_blob_viewer: ace
+  default_blob_viewer: simple
 
   # Show file size in tree
   tree_show_file_size: false

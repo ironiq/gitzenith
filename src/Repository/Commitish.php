@@ -13,28 +13,85 @@ class Commitish
 
 	public function __construct( Repository $repository, string $commitish )
 	{
-		$this->hash = strtok( $commitish, '/' );
-		$revs = [ ...$repository->getBranches(), ...$repository->getTags() ];
+		// Reworked branch/tag/commithash handling
+		// It seems this class is called several ways with the following possible params:
+		// - branchname
+		// - branchname/path
+		// - tag
+		// - tag/path
+		// - commithash
+		// - commithash/path
 
-		foreach( $revs as $rev )
+		$found = null;
+		$pathInTree = '.';
+		$parts = explode( '/', $commitish );
+		for( $i = count( $parts ); $i >= 1; --$i )
 		{
-			if( false === ( $pos = strpos( $this->hash, (string) $rev->getName() ) ) )
+			$candidate = implode( '/', array_slice( $parts, 0, $i ) );
+			$candidate = trim( $candidate, '/' );
+
+			if( $repository->isValidBranch( $candidate ) )
 			{
-				continue;
+				$type = 'branch';
+				$found = true;
+			}
+			elseif( $repository->isValidGitTag( $candidate, $repository ) )
+			{
+				$type = 'tag';
+				$found = true;
+			}
+			elseif( $repository->isValidCommitId( $candidate, $repository ) )
+			{
+				$type = 'commit';
+				$found = true;
+			}
+			else
+			{
+				$found = false;
 			}
 
-			$this->hash = $rev->getName();
-			$revSuffix = substr( $commitish, strlen( $this->hash ) );
-
-			if( $revSuffix && ( $revSuffix[0] === '@' || $revSuffix[0] === '^' || $revSuffix[0] === '~' ) )
+			if( $found )
 			{
-				$this->hash .= strtok( $revSuffix, '/' );
+				$pathInTree = implode( '/', array_slice( $parts, $i ) );
+				$pathInTree = ( $pathInTree !== '' ) ? $pathInTree : '.';
+				break;
 			}
 		}
 
-		if( $this->hash != $commitish )
+		if( $found )
 		{
-			$this->path = substr( $commitish, strlen( $this->hash ) + 1 );
+			switch( $type )
+			{
+				case 'branch':
+					$this->hash = $repository->getLastCommit()->getHash();
+					if( $repository->getCurrentBranch() !== $candidate )
+					{
+						$repository->setCurrentBranch( $candidate );
+					}
+					break;
+
+				case 'tag':
+					// code...
+					break;
+
+				case 'commit':
+					$this->hash = $candidate;
+					break;
+			}
+			$this->path = $pathInTree;
+		}
+		else
+		{
+			$foo = $repository->getCommitsFromPath( $pathInTree, 'HEAD', 1, 1 );
+			if( is_array( $foo ) )
+			{
+				$this->hash = array_values( $foo )[0]->getHash();
+			}
+			else
+			{
+				$this->hash = $foo;
+			}
+			$this->path = $pathInTree;
 		}
 	}
 
