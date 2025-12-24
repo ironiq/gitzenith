@@ -10,7 +10,8 @@ parameters:
   locale: en
 
   # Theme
-  theme: zenith
+  theme: zenithdark
+  # theme: zenith
 
   # Navigation links
   navigation:
