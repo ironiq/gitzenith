@@ -9,14 +9,18 @@ use Symfony\Component\HttpFoundation\Request;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$env = __DIR__ . '/../.env';
-if( is_readable( $env ) )
+if( is_readable( dirname( __DIR__ ) . '/.env' ) )
 {
-	( new Dotenv() )->load( $env );
+	( new Dotenv() )->loadEnv( dirname( __DIR__ ) . '/.env' );
 }
 
-$env = $_SERVER['APP_ENV'] = $_ENV['APP_ENV'] ?? $_SERVER['APP_ENV'] ?? 'prod';
-$debug = (bool) ( $_SERVER['APP_DEBUG'] ?? ( 'prod' !== $env ) );
+$_SERVER += $_ENV;
+$_SERVER['APP_ENV'] = $_ENV['APP_ENV'] = ($_SERVER['APP_ENV'] ?? $_ENV['APP_ENV'] ?? null) ?: 'dev';
+$_SERVER['APP_DEBUG'] = $_SERVER['APP_DEBUG'] ?? $_ENV['APP_DEBUG'] ?? 'prod' !== $_SERVER['APP_ENV'];
+$_SERVER['APP_DEBUG'] = $_ENV['APP_DEBUG'] = (int) $_SERVER['APP_DEBUG'] || filter_var($_SERVER['APP_DEBUG'], FILTER_VALIDATE_BOOLEAN) ? '1' : '0';
+
+$env = $_SERVER['APP_ENV'];
+$debug = (bool) ( $_SERVER['APP_DEBUG'] ?? ( $env !== 'prod' ) );
 
 if( $debug )
 {
