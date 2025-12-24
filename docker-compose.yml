@@ -30,5 +30,6 @@ services:
       - .:/application:cached
       - var-cache-volume:/application/var/cache
       - $HOME/.composer:/root/.composer/:cached
+      - /tmp:/var/repositories
     extra_hosts:
       - "host.docker.internal:host-gateway"
