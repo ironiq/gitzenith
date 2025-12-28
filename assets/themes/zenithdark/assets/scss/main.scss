@@ -1,12 +1,15 @@
-// Import bootstrap and ionicons first time to be able to override
-@import 'bootstrap';
-@import '~ionicons/dist/scss/ionicons';
+// Import bootstrap functions and variables first
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/variables-dark';
+
+/* Define own variables */
 
 // Basic configuration
 $enable-gradients: true;
 $enable-print-styles: false;
 
-// Typography scale
+// Typography
 $font-size-root: 1rem;
 $font-size-base: 1rem;
 $font-size-sm: $font-size-base * 0.875;
@@ -29,7 +32,7 @@ $cyan: #b8cbd4;
 
 // Theme
 $primary: $blue;
-$secondary: #fcfcfc;
+/* $secondary: $gray-600; */
 $success: $green;
 $info: $cyan;
 $warning: $orange;
@@ -38,14 +41,61 @@ $light: #999;
 $dark: #333;
 
 // Component colors
-$card-cap-bg: $body-secondary-bg;
+$card-cap-bg: #002a68;
 $card-cap-color: $secondary;
-$code-bg: $gray-700;
-$code-color: $gray-200;
-$code-border-radius: 6px;
+$code-bg: #495057;
+$code-color: #e9ecef;
 $btn-light-color: #1a1a1a;
+$navbar-dark-active-color: #0d6efd !default;
+$navbar-dark-brand-color: #0d6efd !default;
 
-// Import locals
+// Component overrides
+$code-border-radius: 6px;
+
+/* Include bootstrap */
+// Basics
+@import '~bootstrap/scss/maps';
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/root';
+
+// Layout & components
+@import '~bootstrap/scss/utilities';
+@import '~bootstrap/scss/reboot';
+@import '~bootstrap/scss/type';
+@import '~bootstrap/scss/images';
+@import '~bootstrap/scss/containers';
+@import '~bootstrap/scss/grid';
+@import '~bootstrap/scss/tables';
+@import '~bootstrap/scss/forms';
+@import '~bootstrap/scss/buttons';
+@import '~bootstrap/scss/transitions';
+@import '~bootstrap/scss/dropdown';
+@import '~bootstrap/scss/button-group';
+@import '~bootstrap/scss/nav';
+@import '~bootstrap/scss/navbar';
+@import '~bootstrap/scss/card';
+@import '~bootstrap/scss/breadcrumb';
+@import '~bootstrap/scss/pagination';
+@import '~bootstrap/scss/badge';
+@import '~bootstrap/scss/alert';
+@import '~bootstrap/scss/progress';
+@import '~bootstrap/scss/list-group';
+@import '~bootstrap/scss/close';
+@import '~bootstrap/scss/toasts';
+@import '~bootstrap/scss/tooltip';
+@import '~bootstrap/scss/popover';
+@import '~bootstrap/scss/placeholders';
+
+// Helpers
+@import '~bootstrap/scss/helpers';
+
+// Utilities
+@import '~bootstrap/scss/utilities/api';
+
+// IonIcons
+@import '~ionicons/dist/scss/ionicons';
+
+/* Local overrides */
 @import 'buttons';
 @import 'breadcrumb';
 @import 'card';
