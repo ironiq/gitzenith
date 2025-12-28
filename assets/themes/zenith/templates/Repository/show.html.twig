@@ -54,7 +54,7 @@
               </a>
             </div>
           </div>
-          <input type="text" class="form-control" readonly="readonly" value="{{ ssh_clone_url|format(repository.name) }}">
+          <input type="text" id="cloneurl" class="form-control" readonly="readonly" value="{{ ssh_clone_url|format(repository.name) }}">
           <div class="input-group-append">
             <button class="btn btn-secondary btn-blend-left" type="button" data-placement="right" title="{{ 'REPOSITORY_TOOLBAR_CLONE_COPIED'|trans }}"><i class="icon icon-solo ion-md-clipboard"></i></button>
           </div>

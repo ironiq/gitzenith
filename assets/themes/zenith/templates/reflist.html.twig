@@ -4,7 +4,7 @@
   </a>
   <div class="dropdown-menu ref-list">
     <div class="input-group">
-      <input type="text" list="refs" class="form-control" placeholder="{{ 'REPOSITORY_REFLIST_PLACEHOLDER'|trans }}">
+      <input type="text" id="searchbranchtag" list="refs" class="form-control" placeholder="{{ 'REPOSITORY_REFLIST_PLACEHOLDER'|trans }}">
       <datalist id="refs">
         {% for branch in repository.branches %}
           <option value="{{ branch.name }}" data-target="{{ path(path, {repo: repository.name, commitish: getCommitish(branch.name, refPath) }) }}">
