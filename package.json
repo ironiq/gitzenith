@@ -24,16 +24,16 @@
     "ionicons": "4.6"
   },
   "devDependencies": {
-    "@symfony/webpack-encore": "^5.0",
+    "@symfony/webpack-encore": "^6.0",
     "autoprefixer": "^10.4",
-    "cssnano": "^7.0",
+    "cssnano": "^7.1",
     "cypress": "^14.5",
     "file-loader": "^6.2",
     "husky": "^9.1",
-    "postcss-loader": "^8.1",
-    "prettier": "^3.3",
+    "postcss-loader": "^8.2",
+    "prettier": "^3.8",
     "pretty-quick": "^4.0",
-    "sass": "^1.80",
+    "sass": "^1.99",
     "sass-loader": "^16.0"
   },
   "browserslist": [
