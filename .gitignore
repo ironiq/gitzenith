@@ -5,13 +5,15 @@ public/bundles/
 tmp/
 var/
 vendor/
+.cache/
 .php_cs.cache
 .phpunit.result.cache
 .php-cs-fixer.cache
 *.sw?
 .env*
 !.env.dist
-docker-compose.override.yml
+docker-compose.override.yml*
+!docker-compose.override.yml.dist
 npm-debug.log
 phpunit.xml
 yarn-error.log
