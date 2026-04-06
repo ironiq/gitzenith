@@ -9,7 +9,7 @@
     "ext-iconv": "*",
     "ext-mbstring": "*",
     "league/commonmark": "^2.8",
-    "nesbot/carbon": "^3.10",
+    "nesbot/carbon": "^3.9",
     "symfony/asset": "^6.4",
     "symfony/cache": "^6.4",
     "symfony/cache-contracts": "^3.5",
