@@ -2,104 +2,107 @@
 .DEFAULT_GOAL := help
 NAME := gitzenith
 VERSION := $(shell git show -s --format=%h)
-EXEC_DOCKER ?= docker compose exec -T
-EXEC_PHP ?= $(EXEC_DOCKER) php-fpm
-EXEC_NODE ?= $(EXEC_DOCKER) node
-EXEC_WEB ?= $(EXEC_DOCKER) web
+DOCKER_COMPOSE ?= docker compose
+EXEC_DOCKER ?= $(DOCKER_COMPOSE) exec
+EXEC_DOCKER_NOTTY ?= $(EXEC_DOCKER) -T
+EXEC_PHP ?= $(EXEC_DOCKER_NOTTY) php-fpm
+EXEC_NODE ?= $(EXEC_DOCKER_NOTTY) node
+EXEC_WEB ?= $(EXEC_DOCKER_NOTTY) web
 
-# Display the application manual
-help:
-	@echo -e "$(NAME) version \033[33m$(VERSION)\n\e[0m"
-	@echo -e "\033[1;37mUSAGE\e[0m"
-	@echo -e "  \e[4mmake\e[0m <command> [<arg1>] ... [<argN>]\n"
-	@echo -e "\033[1;37mAVAILABLE COMMANDS\e[0m"
+help: # Display the application manual
+	@echo "$(NAME) version \033[33m$(VERSION)\n\e[0m"
+	@echo "\033[1;37mUSAGE\e[0m"
+	@echo "  \e[4mmake\e[0m <command> [<arg1>] ... [<argN>]\n"
+	@echo "\033[1;37mAVAILABLE COMMANDS\e[0m"
 	@grep -E '^[a-zA-Z_-]+:.*?# .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?# "}; {printf "  \033[32m%-20s\033[0m %s\n", $$1, $$2}'
 
-check-deps: check-local-overrides
-	@if ! docker compose --help >/dev/null; then\
-	  echo '\n\033[0;31mdocker compose is not installed.';\
+check-deps:
+	@if ! [ -x "$$(command -v docker)" ]; then\
+	  echo '\n\033[0;31mdocker is not installed.';\
 	  exit 1;\
 	else\
-	  echo "\033[0;32mdocker compose installed\033[0m";\
+	  echo "\033[0;32mdocker installed\033[0m";\
 	fi
 
-# Setup dependencies and development configuration
-setup: check-deps
-	@docker compose pull || true
-	@docker compose up -d --build
+setup: check-deps # Setup dependencies and development configuration
+	$(DOCKER_COMPOSE) pull || true
+	$(DOCKER_COMPOSE) up -d --build
 	$(EXEC_PHP) git config --global --add safe.directory /application
 	$(EXEC_PHP) composer install
 
-# Update dependencies
-update: check-deps
-	@docker compose pull || true
-	@docker compose up -d --build
-	$(EXEC_PHP) git config --global --add safe.directory /application
-	$(EXEC_PHP) composer update
+up: # Create and start containers
+	$(DOCKER_COMPOSE) up -d
 
-# Create and start containers
-up:
-	@docker compose up -d
+down: # Cleanup containers
+	$(DOCKER_COMPOSE) down
 
-# Cleanup containers and build artifacts
-clean:
-	@docker compose down
+clean: # Cleanup containers and build artifacts
+	@$(MAKE) --quiet down
 	$(MAKE) setup
 
-# Start a bash session in the PHP container
-bash:
-	@docker compose exec php-fpm /bin/bash
+bash-php: # Start a bash session in the PHP container
+	$(EXEC_DOCKER) php-fpm /bin/bash
 
-# Run automated test suite
-test:
+bash-node: # Start a bash session in the PHP container
+	$(EXEC_DOCKER) node /bin/bash
+
+test: # Run automated test suite
 	$(EXEC_PHP) composer test
 	$(EXEC_NODE) npm run test
 
-# Run acceptance test suite
-acceptance:
+acceptance: # Run acceptance test suite
 	$(EXEC_NODE) npm run cypress
 
-# Open applicatipn in your browser
-show-app:
-	xdg-open http://$$(docker-compose port webserver 80)/
+show-app: # Open application in your browser
+	xdg-open http://$$(docker compose port webserver 80)/
 
-# Run code style autoformatter
-format:
+update-php: # Update dependencies
+	$(EXEC_PHP) composer update
+
+update-node: # Update dependencies
+	$(EXEC_NODE) npm update
+
+format: # Run code style autoformatter
 	$(EXEC_PHP) composer format
 
-# Build application package
-build:
+build: # Build application package
 	@rm -rf vendor/
 	@rm -rf public/assets/*
 	@composer install --ignore-platform-reqs --no-dev --no-scripts -o
 	@npm run build
 	@zip ./build.zip \
-	-r * .[^.]* \
+	-r . \
+	-x '.cache/*' \
+	-x '.git/*' \
 	-x '.github/*' \
+	-x '.phpunit.cache/*' \
+	-x '.vscode/*' \
 	-x 'assets/*' \
 	-x 'bin/*' \
+	-x 'config/dev/*' \
 	-x 'docker/*' \
+	-x 'docs/*' \
 	-x 'node_modules/*' \
 	-x 'tests/*' \
+	-x 'tmp/*' \
 	-x 'var/cache/*' \
 	-x 'var/log/*' \
-	-x '.git/*' \
 	-x '.dockerignore' \
 	-x '.editorconfig' \
-	-x '.env' \
-	-x '.env.dist' \
+	-x '.env.*' \
 	-x '.gitignore'  \
 	-x '.php-cs-fixer.cache' \
 	-x '.php-cs-fixer.php' \
+	-x '.phpactor.json' \
 	-x '.phpunit.result.cache' \
 	-x '.prettierrc' \
 	-x 'composer.json' \
 	-x 'composer.lock' \
 	-x 'crowdin.yml' \
+	-x 'cypress.config.js' \
 	-x 'cypress.yml' \
 	-x 'cypress.json' \
-	-x 'docker-compose.override.yml' \
-	-x 'docker-compose.override.yml.dist' \
+	-x 'docker-compose.override.yml*' \
 	-x 'docker-compose.yml' \
 	-x 'Makefile' \
 	-x 'package-lock.json' \
@@ -108,17 +111,9 @@ build:
 	-x 'phpunit.xml.dist' \
 	-x 'postcss.config.js' \
 	-x 'webpack.config.js'
+	@zip ./build.zip var/cache var/log
 
 fix-perms:
 	sudo setfacl -R -m u:root:rwX -m u:`whoami`:rwX var/cache var/log vendor/
 	sudo setfacl -dR -m u:root:rwx -m u:`whoami`:rwx var/cache var/log vendor/
 
-check-local-overrides:
-	@$(MAKE) --quiet .env
-	@$(MAKE) --quiet docker-compose.override.yml
-
-docker-compose.override.yml:
-	@ln -s --backup=none docker-compose.override.yml.dist $@
-
-.env:
-	@ln -s --backup=none .env.dist $@
