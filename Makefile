@@ -44,7 +44,7 @@ bash-php: # Start a bash session in the PHP container
 	$(EXEC_DOCKER) php-fpm /bin/bash
 
 bash-node: # Start a bash session in the PHP container
-	$(EXEC_DOCKER) node /bin/bash
+	$(EXEC_DOCKER) node /bin/sh
 
 test: # Run automated test suite
 	$(EXEC_PHP) composer test
