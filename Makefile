@@ -61,7 +61,6 @@ build: # Build application package
 	@rm -rf vendor/
 	@rm -rf public/assets/*
 	@composer install --ignore-platform-reqs --no-dev --no-scripts -o
-	@npm run build
 	@zip ./build.zip \
 	-r . \
 	-x '.cache/*' \

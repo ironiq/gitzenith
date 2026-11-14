@@ -1,10 +1,8 @@
 # Directories
 public/assets/
 public/bundles/
-node_modules/
 var/
 vendor/
-.cache/
 .phpunit.cache/
 tmp/
 
@@ -17,6 +15,4 @@ tmp/
 phpunit.xml
 docker-compose.override.yml*
 !docker-compose.override.yml.dist
-npm-debug.log
 tests/fixtures/hg-repo/.hg/cache
-yarn-error.log
