@@ -1,12 +1,6 @@
 FROM php:8.2-fpm-alpine
 
-ENV PHP_EXT_DEPS \
-    gettext=gettext-dev \
-    icu=icu-dev \
-    libgcrypt=libgcrypt-dev \
-    libxml2=libxml2-dev \
-    libxslt=libxslt-dev \
-    libzip=libzip-dev
+ENV PHP_EXT_DEPS="gettext=gettext-dev icu=icu-dev libgcrypt=libgcrypt-dev libxml2=libxml2-dev libxslt=libxslt-dev libzip=libzip-dev"
 
 RUN set -x; \
     apk add --no-cache --virtual .php-extensions-build-dependencies \
@@ -24,7 +18,7 @@ RUN set -x; \
         xsl \
         zip \
     && printf "\n" | pecl install apcu xdebug \
-    && docker-php-ext-enable apcu xdebug \
+    && docker-php-ext-enable apcu \
     && apk del .php-extensions-build-dependencies
 
 RUN apk add --no-cache \
@@ -36,7 +30,7 @@ RUN apk add --no-cache \
     make \
     wget
 
-ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --2
 
