@@ -2,15 +2,6 @@ volumes:
   var-cache-volume:
 
 services:
-  node:
-    build:
-      context: docker/node/
-    working_dir: /application
-    volumes:
-      - .:/application
-    command: sh -lc "npm ci && npm run watch"
-    tty: true
-
   webserver:
     build:
       context: docker/nginx/
