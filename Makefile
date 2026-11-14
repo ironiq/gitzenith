@@ -54,9 +54,6 @@ show-app: # Open application in your browser
 update-php: # Update dependencies
 	$(EXEC_PHP) composer update
 
-update-node: # Update dependencies
-	$(EXEC_NODE) npm update
-
 format: # Run code style autoformatter
 	$(EXEC_PHP) composer format
 
@@ -77,7 +74,6 @@ build: # Build application package
 	-x 'config/dev/*' \
 	-x 'docker/*' \
 	-x 'docs/*' \
-	-x 'node_modules/*' \
 	-x 'tests/*' \
 	-x 'tmp/*' \
 	-x 'var/cache/*' \
@@ -90,18 +86,12 @@ build: # Build application package
 	-x '.php-cs-fixer.php' \
 	-x '.phpactor.json' \
 	-x '.phpunit.result.cache' \
-	-x '.prettierrc' \
 	-x 'composer.json' \
 	-x 'composer.lock' \
 	-x 'crowdin.yml' \
-	-x 'cypress.config.js' \
-	-x 'cypress.yml' \
-	-x 'cypress.json' \
 	-x 'docker-compose.override.yml*' \
 	-x 'docker-compose.yml' \
 	-x 'Makefile' \
-	-x 'package-lock.json' \
-	-x 'package.json' \
 	-x 'phpstan.neon' \
 	-x 'phpunit.xml.dist' \
 	-x 'postcss.config.js' \
