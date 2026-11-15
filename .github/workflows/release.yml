@@ -9,9 +9,10 @@ jobs:
   release:
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        node-version: [22]
+        os: [ubuntu-24.04]
+
     runs-on: ${{ matrix.os }}
+
     steps:
       - name: Set GITHUB_ENV variables
         run: |
@@ -20,14 +21,6 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v2.5.1
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Install frontend dependencies
-        run: npm install
 
       - name: Build package
         run: make build
