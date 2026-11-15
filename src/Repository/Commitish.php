@@ -31,8 +31,8 @@ class Commitish
 			$commitish = 'HEAD';
 		}
 
-		$parts = explode( '/', $commitish );
 		$branches = [];
+
 		foreach( $repository->getBranches() as $branch )
 		{
 			if( $branch instanceof Branch )
@@ -42,6 +42,7 @@ class Commitish
 		}
 
 		$tags = [];
+
 		foreach( $repository->getTags() as $tag )
 		{
 			if( $tag instanceof Tag )
@@ -54,44 +55,83 @@ class Commitish
 		$resolvedType = null;
 		$resolvedPath = null;
 
-		// Longest matching ref wins. This supports slash-containing branch and tag names.
-		for( $length = count( $parts ); $length >= 1; --$length )
+		// Find the longest matching branch or tag name.
+		$refs = [];
+
+		foreach( $branches as $name => $_ )
 		{
-			$candidate = implode( '/', array_slice( $parts, 0, $length ) );
-			$type = null;
+			$refs[$name] = 'branch';
+		}
 
-			// Explicit branch > tag > object ID precedence makes branch/tag name
-			// collisions deterministic and matches the usual Git web browsing expectation.
-			if( isset( $branches[$candidate] ) )
+		foreach( $tags as $name => $_ )
+		{
+			$refs[$name] ??= 'tag';
+		}
+
+		uksort( $refs, static fn( $a, $b ) => strlen( $b ) <=> strlen( $a ) );
+
+		foreach( $refs as $name => $type )
+		{
+			if( !str_starts_with( $commitish, $name ) )
 			{
-				$type = 'branch';
-			}
-			elseif( isset( $tags[$candidate] ) )
-			{
-				$type = 'tag';
-			}
-			elseif( $candidate === 'HEAD' )
-			{
-				$type = 'revision';
-			}
-			elseif( $repository->isValidCommitId( $candidate ) )
-			{
-				$type = 'commit';
+				continue;
 			}
 
-			if( $type !== null )
+			$remaining = substr( $commitish, strlen( $name ) );
+
+			// The ref must end here, or be followed by a revision operator or path separator.
+			if( $remaining !== '' && !preg_match( '/^(?:~|\^|@\{|\/)/', $remaining ) )
 			{
-				$resolvedRef = $candidate;
-				$resolvedType = $type;
-				$remaining = implode( '/', array_slice( $parts, $length ) );
+				continue;
+			}
+
+			$resolvedRef = $name;
+			$resolvedType = $type;
+
+			// Check whether a Git revision expression follows the ref.
+			if( preg_match( '/^((?:\^\{[^}]+\}|@\{[^}]+\}|~\d*|\^\d*)+)/', $remaining, $matches ) )
+			{
+				$resolvedRef .= $matches[1];
+				$remaining = substr( $remaining, strlen( $matches[1] ) );
+			}
+
+			$remaining = ltrim( $remaining, '/' );
+			$resolvedPath = $remaining === '' ? null : $remaining;
+
+			break;
+		}
+
+		// HEAD and commit IDs are handled separately.
+		if( $resolvedRef === null )
+		{
+			if( $commitish === 'HEAD' || str_starts_with( $commitish, 'HEAD/' ) )
+			{
+				$resolvedRef = 'HEAD';
+				$resolvedType = 'revision';
+				$remaining = substr( $commitish, strlen( 'HEAD' ) );
+				$remaining = ltrim( $remaining, '/' );
 				$resolvedPath = $remaining === '' ? null : $remaining;
-				break;
+			}
+			else
+			{
+				$parts = explode( '/', $commitish, 2 );
+				$candidate = $parts[0];
+
+				if( $repository->isValidCommitId( $candidate ) )
+				{
+					$resolvedRef = $candidate;
+					$resolvedType = 'commit';
+					$remaining = $parts[1] ?? '';
+					$resolvedPath = $remaining === '' ? null : $remaining;
+				}
 			}
 		}
 
 		if( $resolvedRef === null || $resolvedType === null )
 		{
-			throw new InvalidCommitException( sprintf( 'Unable to resolve Git ref in "%s".', $commitish ) );
+			throw new InvalidCommitException(
+				sprintf( 'Unable to resolve Git ref "%s" to a commit.', $commitish )
+			);
 		}
 
 		try
@@ -100,7 +140,11 @@ class Commitish
 		}
 		catch( \Throwable $exception )
 		{
-			throw new InvalidCommitException( sprintf( 'Unable to resolve Git ref "%s" to a commit.', $resolvedRef ), 0, $exception );
+			throw new InvalidCommitException(
+				sprintf( 'Unable to resolve Git ref "%s" to a commit.', $resolvedRef ),
+				0,
+				$exception
+			);
 		}
 
 		$this->ref = $resolvedRef;

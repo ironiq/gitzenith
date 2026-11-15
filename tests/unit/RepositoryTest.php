@@ -6,6 +6,7 @@ namespace GitZenith;
 
 use GitZenith\SCM\Blame;
 use GitZenith\SCM\Blob;
+use GitZenith\SCM\Branch;
 use GitZenith\SCM\Commit;
 use GitZenith\SCM\Commit\Criteria;
 use GitZenith\SCM\Repository as SourceRepository;
@@ -13,16 +14,41 @@ use GitZenith\SCM\System;
 use GitZenith\SCM\Tree;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 
 class RepositoryTest extends TestCase
 {
 	use ProphecyTrait;
 
+	private const TEST_COMMIT_HASH = '1234567890123456789012345678901234567890';
+
+	private function createSystemMock( SourceRepository $repository ): ObjectProphecy
+	{
+		$system = $this->prophesize( System::class );
+
+		$system->getBranches( $repository )->willReturn( [] );
+		$system->getTags( $repository )->willReturn( [] );
+		$system->isValidCommitId( $repository, Argument::type( 'string' ) )->willReturn( false );
+		$system->getCommits( $repository, Argument::cetera() )->willReturn( [] );
+
+		return $system;
+	}
+
+	private function createBranch( SourceRepository $repository, string $name ): Branch
+	{
+		return new Branch(
+			$repository,
+			$name,
+			new Commit( $repository, self::TEST_COMMIT_HASH )
+		);
+	}
+
 	public function testIsGettingBranches(): void
 	{
 		$sourceRepository = new SourceRepository( '/foo/bar' );
 
-		$system = $this->prophesize( System::class );
+		$system = $this->createSystemMock( $sourceRepository );
 		$system->getBranches( $sourceRepository )->shouldBeCalled()->willReturn( [] );
 
 		$repository = new Repository( $system->reveal(), $sourceRepository, 'bar' );
@@ -33,7 +59,7 @@ class RepositoryTest extends TestCase
 	{
 		$sourceRepository = new SourceRepository( '/foo/bar' );
 
-		$system = $this->prophesize( System::class );
+		$system = $this->createSystemMock( $sourceRepository );
 		$system->getTags( $sourceRepository )->shouldBeCalled()->willReturn( [] );
 
 		$repository = new Repository( $system->reveal(), $sourceRepository, 'bar' );
@@ -44,20 +70,20 @@ class RepositoryTest extends TestCase
 	{
 		$sourceRepository = new SourceRepository( '/foo/bar' );
 
-		$system = $this->prophesize( System::class );
-		$system->getBranches( $sourceRepository )->shouldBeCalled()->willReturn( [] );
-		$system->getTags( $sourceRepository )->shouldBeCalled()->willReturn( [] );
-		$system->getTree( $sourceRepository, '123' )->shouldBeCalled()->willReturn( new Tree( $sourceRepository, '123' ) );
+		$system = $this->createSystemMock( $sourceRepository );
+		$system->isValidCommitId( $sourceRepository, self::TEST_COMMIT_HASH )->willReturn( true );
+		$system->resolveCommitHash( $sourceRepository, self::TEST_COMMIT_HASH, 'commit' )->willReturn( self::TEST_COMMIT_HASH );
+		$system->getTree( $sourceRepository, self::TEST_COMMIT_HASH )->shouldBeCalled()->willReturn( new Tree( $sourceRepository, self::TEST_COMMIT_HASH ) );
 
 		$repository = new Repository( $system->reveal(), $sourceRepository, 'bar' );
-		$repository->getTree( '123' );
+		$repository->getTree( self::TEST_COMMIT_HASH );
 	}
 
 	public function testIsGettingTreeWithoutHash(): void
 	{
 		$sourceRepository = new SourceRepository( '/foo/bar' );
 
-		$system = $this->prophesize( System::class );
+		$system = $this->createSystemMock( $sourceRepository );
 		$system->getTree( $sourceRepository )->shouldBeCalled()->willReturn( new Tree( $sourceRepository, '123' ) );
 
 		$repository = new Repository( $system->reveal(), $sourceRepository, 'bar' );
@@ -68,33 +94,33 @@ class RepositoryTest extends TestCase
 	{
 		$sourceRepository = new SourceRepository( '/foo/bar' );
 
-		$system = $this->prophesize( System::class );
-		$system->getBranches( $sourceRepository )->shouldBeCalled()->willReturn( [] );
-		$system->getTags( $sourceRepository )->shouldBeCalled()->willReturn( [] );
-		$system->getPathTree( $sourceRepository, 'f/b', '123' )->shouldBeCalled()->willReturn( new Tree( $sourceRepository, '123' ) );
+		$system = $this->createSystemMock( $sourceRepository );
+		$system->isValidCommitId( $sourceRepository, self::TEST_COMMIT_HASH )->willReturn( true );
+		$system->resolveCommitHash( $sourceRepository, self::TEST_COMMIT_HASH, 'commit' )->willReturn( self::TEST_COMMIT_HASH );
+		$system->getPathTree( $sourceRepository, 'f/b', self::TEST_COMMIT_HASH )->shouldBeCalled()->willReturn( new Tree( $sourceRepository, '123' ) );
 
 		$repository = new Repository( $system->reveal(), $sourceRepository, 'bar' );
-		$repository->getTree( '123/f/b' );
+		$repository->getTree( self::TEST_COMMIT_HASH . '/f/b' );
 	}
 
 	public function testIsGettingCommitWithHash(): void
 	{
 		$sourceRepository = new SourceRepository( '/foo/bar' );
 
-		$system = $this->prophesize( System::class );
-		$system->getBranches( $sourceRepository )->shouldBeCalled()->willReturn( [] );
-		$system->getTags( $sourceRepository )->shouldBeCalled()->willReturn( [] );
-		$system->getCommit( $sourceRepository, '123' )->shouldBeCalled()->willReturn( new Commit( $sourceRepository, '123' ) );
+		$system = $this->createSystemMock( $sourceRepository );
+		$system->isValidCommitId( $sourceRepository, self::TEST_COMMIT_HASH )->willReturn( true );
+		$system->resolveCommitHash( $sourceRepository, self::TEST_COMMIT_HASH, 'commit' )->willReturn( self::TEST_COMMIT_HASH );
+		$system->getCommit( $sourceRepository, self::TEST_COMMIT_HASH )->shouldBeCalled()->willReturn( new Commit( $sourceRepository, self::TEST_COMMIT_HASH ) );
 
 		$repository = new Repository( $system->reveal(), $sourceRepository, 'bar' );
-		$repository->getCommit( '123' );
+		$repository->getCommit( self::TEST_COMMIT_HASH );
 	}
 
 	public function testIsGettingCommitWithoutHash(): void
 	{
 		$sourceRepository = new SourceRepository( '/foo/bar' );
 
-		$system = $this->prophesize( System::class );
+		$system = $this->createSystemMock( $sourceRepository );
 		$system->getCommit( $sourceRepository )->shouldBeCalled()->willReturn( new Commit( $sourceRepository, '123' ) );
 
 		$repository = new Repository( $system->reveal(), $sourceRepository, 'bar' );
@@ -105,21 +131,21 @@ class RepositoryTest extends TestCase
 	{
 		$sourceRepository = new SourceRepository( '/foo/bar' );
 
-		$system = $this->prophesize( System::class );
-		$system->getBranches( $sourceRepository )->shouldBeCalled()->willReturn( [] );
-		$system->getTags( $sourceRepository )->shouldBeCalled()->willReturn( [] );
-		$system->getCommits( $sourceRepository, '123', 1, 10 )->shouldBeCalled()->willReturn( [] );
+		$system = $this->createSystemMock( $sourceRepository );
+		$system->isValidCommitId( $sourceRepository, self::TEST_COMMIT_HASH )->willReturn( true );
+		$system->resolveCommitHash( $sourceRepository, self::TEST_COMMIT_HASH, 'commit' )->willReturn( self::TEST_COMMIT_HASH );
+		$system->getCommits( $sourceRepository, self::TEST_COMMIT_HASH, 1, 10 )->shouldBeCalled()->willReturn( [] );
 
 		$repository = new Repository( $system->reveal(), $sourceRepository, 'bar' );
-		$repository->getCommits( '123', 1, 10 );
+		$repository->getCommits( self::TEST_COMMIT_HASH, 1, 10 );
 	}
 
 	public function testIsGettingCommitsWithoutHash(): void
 	{
 		$sourceRepository = new SourceRepository( '/foo/bar' );
 
-		$system = $this->prophesize( System::class );
-		$system->getCommits( $sourceRepository, null, 1, 10 )->shouldBeCalled()->willReturn( [] );
+		$system = $this->createSystemMock( $sourceRepository );
+		$system->getCommits( $sourceRepository, 'HEAD', 1, 10 )->shouldBeCalled()->willReturn( [] );
 
 		$repository = new Repository( $system->reveal(), $sourceRepository, 'bar' );
 		$repository->getCommits( null, 1, 10 );
@@ -129,7 +155,7 @@ class RepositoryTest extends TestCase
 	{
 		$sourceRepository = new SourceRepository( '/foo/bar' );
 
-		$system = $this->prophesize( System::class );
+		$system = $this->createSystemMock( $sourceRepository );
 		$system->getSpecificCommits( $sourceRepository, ['a', 'b'] )->shouldBeCalled()->willReturn( [] );
 
 		$repository = new Repository( $system->reveal(), $sourceRepository, 'bar' );
@@ -140,23 +166,28 @@ class RepositoryTest extends TestCase
 	{
 		$sourceRepository = new SourceRepository( '/foo/bar' );
 
-		$system = $this->prophesize( System::class );
-		$system->getBranches( $sourceRepository )->shouldBeCalled()->willReturn( [] );
-		$system->getTags( $sourceRepository )->shouldBeCalled()->willReturn( [] );
-		$system->getBlame( $sourceRepository, '123', 'foo.php' )->shouldBeCalled()->willReturn( new Blame( '123', 'foo.php' ) );
+		$system = $this->createSystemMock( $sourceRepository );
+		$system->isValidCommitId( $sourceRepository, self::TEST_COMMIT_HASH )->willReturn( true );
+		$system->resolveCommitHash( $sourceRepository, self::TEST_COMMIT_HASH, 'commit' )->willReturn( self::TEST_COMMIT_HASH );
+		$system->getBlame( $sourceRepository, self::TEST_COMMIT_HASH, 'foo.php' )->shouldBeCalled()->willReturn( new Blame( self::TEST_COMMIT_HASH, 'foo.php' ) );
 
 		$repository = new Repository( $system->reveal(), $sourceRepository, 'bar' );
-		$repository->getBlame( '123/foo.php' );
+		$repository->getBlame( self::TEST_COMMIT_HASH . '/foo.php' );
 	}
 
 	public function testIsGettingBlob(): void
 	{
 		$sourceRepository = new SourceRepository( '/foo/bar' );
 
-		$system = $this->prophesize( System::class );
-		$system->getBranches( $sourceRepository )->shouldBeCalled()->willReturn( [] );
-		$system->getTags( $sourceRepository )->shouldBeCalled()->willReturn( [] );
-		$system->getBlob( $sourceRepository, 'master', 'test.c' )->shouldBeCalled()->willReturn( new Blob( $sourceRepository, 'test.c' ) );
+		$system = $this->createSystemMock( $sourceRepository );
+		$system->getBranches( $sourceRepository )
+			->willReturn( [ $this->createBranch( $sourceRepository, 'master' ) ] );
+		$system->resolveCommitHash( $sourceRepository, 'master', 'branch' )
+			->willReturn( self::TEST_COMMIT_HASH );
+
+		$system->getBlob( $sourceRepository, self::TEST_COMMIT_HASH, 'test.c' )
+			->shouldBeCalled()
+			->willReturn( new Blob( $sourceRepository, 'test.c' ) );
 
 		$repository = new Repository( $system->reveal(), $sourceRepository, 'bar' );
 		$repository->getBlob( 'master/test.c' );
@@ -167,7 +198,7 @@ class RepositoryTest extends TestCase
 		$sourceRepository = new SourceRepository( '/foo/bar' );
 		$criteria = new Criteria();
 
-		$system = $this->prophesize( System::class );
+		$system = $this->createSystemMock( $sourceRepository );
 		$system->searchCommits( $sourceRepository, $criteria )->shouldBeCalled()->willReturn( [] );
 
 		$repository = new Repository( $system->reveal(), $sourceRepository, 'bar' );
@@ -179,10 +210,11 @@ class RepositoryTest extends TestCase
 		$sourceRepository = new SourceRepository( '/foo/bar' );
 		$criteria = new Criteria();
 
-		$system = $this->prophesize( System::class );
-		$system->getBranches( $sourceRepository )->shouldBeCalled()->willReturn( [] );
-		$system->getTags( $sourceRepository )->shouldBeCalled()->willReturn( [] );
-		$system->searchCommits( $sourceRepository, $criteria, 'master' )->shouldBeCalled()->willReturn( [] );
+		$system = $this->createSystemMock( $sourceRepository );
+		$system->getBranches( $sourceRepository )->willReturn( [ $this->createBranch( $sourceRepository, 'master' ) ] );
+		$system->resolveCommitHash( $sourceRepository, 'master', 'branch' )->willReturn( self::TEST_COMMIT_HASH );
+		$system->searchCommits( $sourceRepository, $criteria, self::TEST_COMMIT_HASH )->shouldBeCalled()->willReturn( [] );
+		// $system->searchCommits( $sourceRepository, $criteria, self::TEST_COMMIT_HASH )->shouldBeCalled()->willReturn( [] );
 
 		$repository = new Repository( $system->reveal(), $sourceRepository, 'bar' );
 		$repository->searchCommits( $criteria, 'master' );
@@ -192,10 +224,10 @@ class RepositoryTest extends TestCase
 	{
 		$sourceRepository = new SourceRepository( '/foo/bar' );
 
-		$system = $this->prophesize( System::class );
-		$system->getBranches( $sourceRepository )->shouldBeCalled()->willReturn( [] );
-		$system->getTags( $sourceRepository )->shouldBeCalled()->willReturn( [] );
-		$system->archive( $sourceRepository, 'zip', 'master', 'test.c' )->shouldBeCalled()->willReturn( '/tmp/test.zip' );
+		$system = $this->createSystemMock( $sourceRepository );
+		$system->getBranches( $sourceRepository )->willReturn( [ $this->createBranch( $sourceRepository, 'master' ) ] );
+		$system->resolveCommitHash( $sourceRepository, 'master', 'branch' )->willReturn( self::TEST_COMMIT_HASH );
+		$system->archive( $sourceRepository, 'zip', self::TEST_COMMIT_HASH, 'test.c' )->shouldBeCalled()->willReturn( '/tmp/test.zip' );
 
 		$repository = new Repository( $system->reveal(), $sourceRepository, 'bar' );
 		$repository->archive( 'zip', 'master/test.c' );

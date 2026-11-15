@@ -13,16 +13,47 @@ use GitZenith\SCM\Repository as SourceRepository;
 use GitZenith\SCM\Tag;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 
 class CommitishTest extends TestCase
 {
 	use ProphecyTrait;
 
+	private ObjectProphecy $repository;
+
+	protected function setUp(): void
+	{
+		parent::setUp();
+
+		$this->repository = $this->prophesize( Repository::class );
+
+		$this->repository->getBranches()->willReturn( $this->getFixtureBranches() );
+
+		$this->repository->getTags()->willReturn( $this->getFixtureTags() );
+
+		$this->repository->isValidCommitId( Argument::type( 'string' ) )
+			->will( static function( array $args ): bool {
+				return preg_match( '/^[a-f0-9]{40}$/i', $args[0] ) === 1;
+			}
+		);
+
+		$this->repository->resolveCommitHash(
+			Argument::type( 'string' ),
+			Argument::type( 'string' )
+		)->will( static function( array $args ): string {
+			return $args[0];
+			}
+		);
+	}
+
 	public function testIsDetectingBranch(): void
 	{
-		$repository = $this->prophesize( Repository::class );
-		$repository->getBranches()->willReturn( $this->getFixtureBranches() );
-		$repository->getTags()->willReturn( $this->getFixtureTags() );
+		$repository = $this->repository;
+		// $repository = $this->prophesize( Repository::class );
+		// $repository->getBranches()->willReturn( $this->getFixtureBranches() );
+		// $repository->getTags()->willReturn( $this->getFixtureTags() );
+		// $repository->isValidCommitId( Argument::type( 'string' ) )->willReturn( false );
 
 		$commitish = new Commitish( $repository->reveal(), 'bugfix/bar/test/file.php' );
 		$this->assertEquals( 'bugfix/bar', $commitish->getHash() );
@@ -35,9 +66,11 @@ class CommitishTest extends TestCase
 
 	public function testIsDetectingTag(): void
 	{
-		$repository = $this->prophesize( Repository::class );
-		$repository->getBranches()->willReturn( $this->getFixtureBranches() );
-		$repository->getTags()->willReturn( $this->getFixtureTags() );
+		$repository = $this->repository;
+		// $repository = $this->prophesize( Repository::class );
+		// $repository->getBranches()->willReturn( $this->getFixtureBranches() );
+		// $repository->getTags()->willReturn( $this->getFixtureTags() );
+		// $repository->isValidCommitId( Argument::type( 'string' ) )->willReturn( false );
 
 		$commitish = new Commitish( $repository->reveal(), 'v1.2-test/test/file.php' );
 		$this->assertEquals( 'v1.2-test', $commitish->getHash() );
@@ -50,9 +83,11 @@ class CommitishTest extends TestCase
 
 	public function testIsDetectingCommit(): void
 	{
-		$repository = $this->prophesize( Repository::class );
-		$repository->getBranches()->willReturn( $this->getFixtureBranches() );
-		$repository->getTags()->willReturn( $this->getFixtureTags() );
+		$repository = $this->repository;
+		// $repository = $this->prophesize( Repository::class );
+		// $repository->getBranches()->willReturn( $this->getFixtureBranches() );
+		// $repository->getTags()->willReturn( $this->getFixtureTags() );
+		// $repository->isValidCommitId( Argument::type( 'string' ) )->willReturn( false );
 
 		$commitish = new Commitish( $repository->reveal(), '14f8d0b69fa61d2d6daa2acc5b38c9956973206b/test/file.php' );
 		$this->assertEquals( '14f8d0b69fa61d2d6daa2acc5b38c9956973206b', $commitish->getHash() );
@@ -61,23 +96,27 @@ class CommitishTest extends TestCase
 
 	public function testIsDetectingRefWithDate(): void
 	{
-		$repository = $this->prophesize( Repository::class );
-		$repository->getBranches()->willReturn( $this->getFixtureBranches() );
-		$repository->getTags()->willReturn( $this->getFixtureTags() );
+		$repository = $this->repository;
+		// $repository = $this->prophesize( Repository::class );
+		// $repository->getBranches()->willReturn( $this->getFixtureBranches() );
+		// $repository->getTags()->willReturn( $this->getFixtureTags() );
+		// $repository->isValidCommitId( Argument::type( 'string' ) )->willReturn( false );
 
 		$commitish = new Commitish( $repository->reveal(), 'bugfix/bar@{yesterday}/test/file.php' );
-		$this->assertEquals( 'bugfix/bar@{yesterday}', $commitish->getHash() );
+		$this->assertEquals( 'bugfix/bar@{yesterday}', $commitish->getRef() );
 		$this->assertEquals( 'test/file.php', $commitish->getPath() );
 	}
 
 	public function testIsDetectingRefWithNumber(): void
 	{
-		$repository = $this->prophesize( Repository::class );
-		$repository->getBranches()->willReturn( $this->getFixtureBranches() );
-		$repository->getTags()->willReturn( $this->getFixtureTags() );
+		$repository = $this->repository;
+		// $repository = $this->prophesize( Repository::class );
+		// $repository->getBranches()->willReturn( $this->getFixtureBranches() );
+		// $repository->getTags()->willReturn( $this->getFixtureTags() );
+		// $repository->isValidCommitId( Argument::type( 'string' ) )->willReturn( false );
 
 		$commitish = new Commitish( $repository->reveal(), 'bugfix/bar~3/test/file.php' );
-		$this->assertEquals( 'bugfix/bar~3', $commitish->getHash() );
+		$this->assertEquals( 'bugfix/bar~3', $commitish->getRef() );
 		$this->assertEquals( 'test/file.php', $commitish->getPath() );
 
 		$commitish = new Commitish( $repository->reveal(), 'bugfix/bar^{14f8d0b69fa61d2d6daa2acc5b38c9956973206b}/test/file.php' );
