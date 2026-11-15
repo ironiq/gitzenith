@@ -16,6 +16,9 @@ interface System
 
 	public function isValidCommitId( Repository $repository, string $hash ): bool;
 
+	/** Resolve a branch, tag, HEAD or commit-ish to a full commit hash. */
+	public function resolveCommitHash( Repository $repository, string $ref, string $type ): string;
+
 	public function getDescription( Repository $repository ): string;
 
 	public function getDefaultBranch( Repository $repository ): string;

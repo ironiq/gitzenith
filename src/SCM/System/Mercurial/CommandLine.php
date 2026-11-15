@@ -66,6 +66,18 @@ class CommandLine implements System
 		return true;
 	}
 
+	public function resolveCommitHash( Repository $repository, string $ref, string $type ): string
+	{
+		$output = trim( $this->run( [ 'log', '-r', $ref, '-T', '{node}' ], $repository ) );
+
+		if( $output === '' )
+		{
+			throw new \RuntimeException( sprintf( 'Mercurial did not resolve "%s" to a changeset.', $ref ) );
+		}
+
+		return $output;
+	}
+
 	public function getDescription( Repository $repository ): string
 	{
 		$path = $repository->getPath();

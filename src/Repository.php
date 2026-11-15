@@ -27,6 +27,11 @@ class Repository
 		return $this->repository;
 	}
 
+	public function resolveCommitHash( string $ref, string $type ): string
+	{
+		return $this->system->resolveCommitHash( $this->repository, $ref, $type );
+	}
+
 	public function getName(): string
 	{
 		return $this->name;

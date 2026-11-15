@@ -47,7 +47,7 @@ class CommandLine implements System
 	private function isCommitId( string $candidate ): bool
 	{
 		// Match full 40-char or short 7+ hex SHA
-		return (bool) preg_match( '/^[0-9a-f]{7,40}$/i', $candidate );
+		return (bool) preg_match( '/^[0-9a-f]{7,64}$/i', $candidate );
 	}
 
 	public function isValidRepository( Repository $repository ): bool
@@ -93,6 +93,25 @@ class CommandLine implements System
 		}
 
 		return (bool) $this->runCheck( ['rev-parse', '--verify', $hash . '^{commit}'], $repository );
+	}
+
+	public function resolveCommitHash( Repository $repository, string $ref, string $type ): string
+	{
+		$revision = match( $type )
+		{
+			'branch' => 'refs/heads/' . $ref . '^{commit}',
+			'tag' => 'refs/tags/' . $ref . '^{commit}',
+			default => $ref . '^{commit}',
+		};
+
+		$output = trim( $this->run( [ 'rev-parse', '--verify', '--end-of-options', $revision ], $repository ) );
+
+		if( !preg_match( '/^[0-9a-f]{40,64}$/i', $output ) )
+		{
+			throw new \RuntimeException( sprintf( 'Git did not resolve "%s" to a commit.', $ref ) );
+		}
+
+		return strtolower( $output );
 	}
 
 	public function getDescription( Repository $repository ): string
