@@ -28,15 +28,10 @@ services:
       $depth: '%repository_depth%'
       $systems:
         - '@GitZenith\SCM\System\Git\CommandLine'
-        - '@GitZenith\SCM\System\Mercurial\CommandLine'
 
   GitZenith\SCM\System\Git\CommandLine:
     arguments:
       $path: '%git_path%'
-
-  GitZenith\SCM\System\Mercurial\CommandLine:
-    arguments:
-      $path: '%hg_path%'
 
   GitZenith\App\Twig\AvatarExtension:
     arguments:

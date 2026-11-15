@@ -49,7 +49,6 @@ parameters:
 
   # Default binary paths
   git_path: /usr/bin/git
-  hg_path: /usr/bin/hg
 
   secret: '%env(APP_SECRET)%'
 

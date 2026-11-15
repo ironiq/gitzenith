@@ -26,7 +26,6 @@ RUN apk add --no-cache \
     coreutils \
     git \
     grep \
-    mercurial \
     make \
     wget
 
