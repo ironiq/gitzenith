@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
+use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 
 class Kernel extends BaseKernel
 {
@@ -44,9 +45,10 @@ class Kernel extends BaseKernel
 			WebpackEncoreBundle::class,
 		];
 
-		if( $this->debug )
+		if( $this->environment === 'dev' && $this->debug )
 		{
 			$bundles[] = DebugBundle::class;
+			$bundles[] = WebProfilerBundle::class;
 		}
 
 		foreach( $bundles as $bundle )
@@ -61,6 +63,11 @@ class Kernel extends BaseKernel
 		$loader->load( $confDir . '/config.yml' );
 		$loader->load( $confDir . '/framework.yml' );
 		$loader->load( $confDir . '/services.yml' );
+
+		if( $this->environment === 'dev' && $this->debug )
+		{
+			$loader->load( $confDir . '/dev/web_profiler.yml' );
+		}
 	}
 
 	private function configureRoutes( RoutingConfigurator $routes ): void

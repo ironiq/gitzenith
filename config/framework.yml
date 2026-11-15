@@ -4,6 +4,9 @@ framework:
     handler_id: ~
   php_errors:
     log: true
+  profiler:
+    enabled: true
+    collect: true
   cache:
     prefix_seed: gl
   router:
