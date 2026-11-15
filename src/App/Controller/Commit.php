@@ -8,6 +8,7 @@ use GitZenith\Repository\Commitish;
 use GitZenith\Repository\Index;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use Twig\Environment;
 
 class Commit
@@ -16,12 +17,17 @@ class Commit
 	{
 	}
 
-	public function list( Request $request, string $repository, string $commitish ): Response
+	#[Route(
+		'/{repo}/commits/{commitish}',
+		name: 'commit_list',
+		requirements: [ 'repo' => '%valid_repository_name%', 'commitish' => '%valid_commitish_format%' ],
+	)]
+	public function list( Request $request, string $repo, string $commitish ): Response
 	{
 		$page = (int) $request->query->get( 'page', 1 );
 		$perPage = (int) $request->query->get( 'perPage', $this->perPage );
 
-		$repository = $this->index->getRepository( $repository );
+		$repository = $this->index->getRepository( $repo );
 		$commits = $repository->getCommits( $commitish, $page, $perPage );
 		$commitGroups = [];
 
@@ -41,9 +47,14 @@ class Commit
 		] ) );
 	}
 
-	public function show( string $repository, string $commitish ): Response
+	#[Route(
+		'/{repo}/commit/{commitish}',
+		name: 'commit_show',
+		requirements: [ 'repo' => '%valid_repository_name%', 'commitish' => '%valid_commitish_format%' ],
+	)]
+	public function show( string $repo, string $commitish ): Response
 	{
-		$repository = $this->index->getRepository( $repository );
+		$repository = $this->index->getRepository( $repo );
 		$commit = $repository->getCommit( $commitish );
 
 		return new Response( $this->templating->render( 'Commit/show.html.twig', [
@@ -52,9 +63,14 @@ class Commit
 		] ) );
 	}
 
-	public function feed( string $repository, string $commitish, string $format ): Response
+	#[Route(
+		'/{repo}/feed/{commitish}.{format}',
+		name: 'repository_feed',
+		requirements: [ 'repo' => '%valid_repository_name%', 'commitish' => '%valid_commitish_format%', 'format' => '(atom|rss)' ],
+	)]
+	public function feed( string $repo, string $commitish, string $format ): Response
 	{
-		$repository = $this->index->getRepository( $repository );
+		$repository = $this->index->getRepository( $repo );
 		$commits = $repository->getCommits( $commitish, 1, $this->perPage );
 		$commitish = new Commitish( $repository, $commitish );
 

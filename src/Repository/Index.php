@@ -18,6 +18,11 @@ class Index
 	 */
 	protected array $repositories = [];
 
+	/**
+	 * @param string[] $paths
+	 * @param string[] $excludePaths
+	 * @param string[] $systems
+	 */
 	public function __construct( array $paths, array $excludePaths, string $depth, protected array $systems )
 	{
 		$finder = new Finder();
@@ -77,6 +82,9 @@ class Index
 		return $this->repositories[$name];
 	}
 
+	/**
+	 * @return Repository[]
+	 */
 	public function getRepositories(): array
 	{
 		return $this->repositories;

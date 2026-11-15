@@ -52,14 +52,21 @@ class RepositoryExtension extends AbstractExtension
 
 	public function getCommitish( string $hash, string $path ): string
 	{
-		return $hash.'/'.$path;
+		if( $path != '' )
+		{
+			return $hash . '/' . $path;
+		}
+		else
+		{
+			return $hash;
+		}
 	}
 
 	public function getParent( string $path ): string
 	{
 		$parent = dirname( $path );
 
-		if( '.' == $parent )
+		if( $parent == '.' )
 		{
 			return '';
 		}
@@ -75,7 +82,7 @@ class RepositoryExtension extends AbstractExtension
 
 		foreach( $parts as $index => $part )
 		{
-			$previousPart .= ( 0 == $index ? '' : '/' ).$part;
+			$previousPart .= ( $index == 0 ? '' : '/' ) . $part;
 			$breadcrumbs[] = [
 				'name' => $part,
 				'commitish' => $this->getCommitish( $blob->getHash(), $previousPart ),
@@ -97,6 +104,6 @@ class RepositoryExtension extends AbstractExtension
 		$pow = min( $pow, count( $units ) - 1 );
 		$value /= 1024 ** $pow;
 
-		return (string) round( $value, 2 ).' '.$units[$pow];
+		return (string) round( $value, 2 ) . ' ' . $units[$pow];
 	}
 }

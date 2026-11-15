@@ -17,6 +17,8 @@ class Parse
 		'/^index\s([\da-zA-Z]+,)([\da-zA-Z]+\.\.[\da-zA-Z]+)(\s(\d+))?$/' => 'mergeIndex',
 		'/^---\s/' => 'fromFile',
 		'/^\+\+\+\s/' => 'toFile',
+		'/^rename from (.+)$/' => 'renameFrom',
+		'/^rename to (.+)$/' => 'renameTo',
 		'/^@@\s+(\-(\d+),?(\d+)?\s+)+(\+(\d+),?(\d+)?\s)+@@/' => 'hunk',
 		'/^@@@\s+(\-(\d+),?(\d+)?\s+)+(\+(\d+),?(\d+)?\s)+@@@/' => 'hunk',
 		'/^-/' => 'deletedLine',
@@ -107,6 +109,18 @@ class Parse
 		$this->currentFile->setTo( trim( $line, '+ ' ) );
 	}
 
+	protected function renameFrom( string $line, array $context ): void
+	{
+		$this->currentFile->setFrom( $context[1] );
+	}
+
+	protected function renameTo( string $line, array $context ): void
+	{
+		$this->currentFile->setTo( $context[1] );
+		$this->currentFile->setName( $context[1] );
+		$this->currentFile->setType( File::TYPE_RENAMED );
+	}
+
 	protected function hunk( string $line, array $context ): void
 	{
 		if( $this->currentHunk )
@@ -131,7 +145,7 @@ class Parse
 		$oldNumber = $this->oldCounter + $this->deletedLines;
 		$newNumber = $this->newCounter;
 
-		if( null == $this->currentHunk )
+		if( $this->currentHunk == null )
 		{
 			$this->hunk( $line, $context );
 		}
@@ -149,7 +163,7 @@ class Parse
 		$oldNumber = $this->oldCounter;
 		$newNumber = $this->newCounter + $this->addedLines;
 
-		if( null == $this->currentHunk )
+		if( $this->currentHunk == null )
 		{
 			$this->hunk( $line, $context );
 		}

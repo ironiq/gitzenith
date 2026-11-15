@@ -17,6 +17,8 @@ GitZenith is an elegant and modern web interface for interacting with multiple g
 In order to run GitZenith on your server, you'll need:
 
 * PHP 8.2
+  * php-xml
+  * php-mbstring
 * git 2
 * Webserver (Apache, nginx)
 
@@ -28,7 +30,7 @@ In order to run GitZenith on your server, you'll need:
   * Alternatively, you can export the environment variable `DEFAULT_REPOSITORY_DIR` with the directory containing your repositories
 * Create the cache and log folder and give it read/write permissions to your web server user:
 
-```
+```bash
 cd /var/www/gitzenith
 mkdir -p var/cache
 chmod 777 var/cache
@@ -42,7 +44,7 @@ That's it, installation complete! If you're having problems, check the [Troubles
 
 ## Development
 
-GitZenith comes with a Docker Compose configuration intended for development purposes. It contains a PHP image with all necessary extensions, as well as a Node image for frontend assets.
+GitZenith comes with a Docker Compose configuration intended for development purposes. It contains a PHP image with all necessary extensions.
 
 To get started, just clone the repo and run the setup script:
 
@@ -55,7 +57,6 @@ It should take care of letting you know what is missing, if anything. Once finis
 
 ```bash
 make test
-make acceptance
 ```
 
 There are other commands available. To learn more:

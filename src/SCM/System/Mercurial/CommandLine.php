@@ -48,16 +48,43 @@ class CommandLine implements System
 	{
 		$path = $repository->getPath();
 
-		return file_exists( $path ) && file_exists( $path.'/.hg' );
+		return file_exists( $path ) && file_exists( $path . '/.hg' );
+	}
+
+	public function isValidBranch( Repository $repository, string $branch ): bool
+	{
+		return true;
+	}
+
+	public function isValidTag( Repository $repository, string $tag ): bool
+	{
+		return true;
+	}
+
+	public function isValidCommitId( Repository $repository, string $hash ): bool
+	{
+		return true;
+	}
+
+	public function resolveCommitHash( Repository $repository, string $ref, string $type ): string
+	{
+		$output = trim( $this->run( [ 'log', '-r', $ref, '-T', '{node}' ], $repository ) );
+
+		if( $output === '' )
+		{
+			throw new \RuntimeException( sprintf( 'Mercurial did not resolve "%s" to a changeset.', $ref ) );
+		}
+
+		return $output;
 	}
 
 	public function getDescription( Repository $repository ): string
 	{
 		$path = $repository->getPath();
 
-		if( file_exists( $path.'/.hg/hgrc' ) )
+		if( file_exists( $path . '/.hg/hgrc' ) )
 		{
-			$hgrc = parse_ini_file( $path.'/.hg/hgrc' );
+			$hgrc = parse_ini_file( $path . '/.hg/hgrc' );
 
 			return $hgrc['description'] ?? '';
 		}
@@ -68,6 +95,16 @@ class CommandLine implements System
 	public function getDefaultBranch( Repository $repository ): string
 	{
 		return 'default';
+	}
+
+	public function getCurrentBranch( Repository $repository ): string
+	{
+		return 'default';
+	}
+
+	public function setCurrentBranch( Repository $repository, string $branch ): bool
+	{
+		return true;
 	}
 
 	public function getBranches( Repository $repository ): array
@@ -215,6 +252,16 @@ class CommandLine implements System
 		return $this->parseCommitDataXml( $repository, $output );
 	}
 
+	public function getAllCommits( Repository $repository, ?string $hash = null ): array
+	{
+		$output = $this->run( [
+			'log',
+			self::DEFAULT_COMMIT_FORMAT,
+		], $repository );
+
+		return $this->parseCommitDataXml( $repository, $output );
+	}
+
 	public function getBlame( Repository $repository, string $hash, string $path ): Blame
 	{
 		$output = $this->run( [ 'annotate', '-cv', '-r', $hash, $path ], $repository );
@@ -279,13 +326,13 @@ class CommandLine implements System
 		if( $criteria->getFrom() && !$criteria->getTo() )
 		{
 			$command[] = '--date';
-			$command[] = '>'.$criteria->getFrom()->format( self::MERCURIAL_DATE_FORMAT );
+			$command[] = '>' . $criteria->getFrom()->format( self::MERCURIAL_DATE_FORMAT );
 		}
 
 		if( !$criteria->getFrom() && $criteria->getTo() )
 		{
 			$command[] = '--date';
-			$command[] = '<'.$criteria->getTo()->format( self::MERCURIAL_DATE_FORMAT );
+			$command[] = '<' . $criteria->getTo()->format( self::MERCURIAL_DATE_FORMAT );
 		}
 
 		if( $criteria->getAuthor() )
@@ -342,7 +389,7 @@ class CommandLine implements System
 
 	protected function parseCommitDataXml( Repository $repository, string $input ): array
 	{
-		$items = new SimpleXMLElement( '<items>'.$input.'</items>' );
+		$items = new SimpleXMLElement( '<items>' . $input . '</items>' );
 		$commits = [];
 
 		foreach( $items as $item )
@@ -384,12 +431,12 @@ class CommandLine implements System
 
 			$file = preg_split( '/[\s]+/', $line, 4 );
 
-			if( '.hgtags' == $file[2] )
+			if( $file[2] == '.hgtags' )
 			{
 				continue;
 			}
 
-			if( '@' == $file[2] )
+			if( $file[2] == '@' )
 			{
 				$symlinkTarget = $this->run( [ 'cat', '-r', $hash, $file[3] ], $repository );
 				$symlink = new Symlink( $repository, $file[0] );

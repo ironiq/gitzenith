@@ -10,7 +10,10 @@ use GitZenith\SCM\File;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 use Twig\Environment;
+
+// use GitZenith\Repository\Commitish;
 
 class Repository
 {
@@ -18,6 +21,7 @@ class Repository
 	{
 	}
 
+	#[Route( '/', name: 'repository_list' )]
 	public function list(): Response
 	{
 		$repositories = $this->index->getRepositories();
@@ -29,25 +33,31 @@ class Repository
 		] ) );
 	}
 
-	public function show( string $repository ): Response
+	#[Route(
+		'/{repo}',
+		name: 'repository_show',
+		requirements: [ 'repo' => '%valid_repository_name%' ],
+	)]
+	public function show( string $repo ): Response
 	{
-		$repository = $this->index->getRepository( $repository );
+		$repository = $this->index->getRepository( $repo );
 		try
 		{
 			$tree = $repository->getTree();
 		}
-		catch ( CommandException $exception )
+		catch ( CommandException $e )
 		{
 			$tree = false;
 		}
 		if( $tree )
 		{
+			// dd($tree->getHash());
 			$lastCommit = $repository->getCommit( $tree->getHash() );
 			$readme = $tree->getReadme();
 
 			if( $readme )
 			{
-				$blob = $repository->getBlob( $tree->getHash().'/'.$readme->getName() );
+				$blob = $repository->getBlob( $lastCommit->getHash() . '/' . $readme->getName() );
 				$readme = File::createFromBlob( $blob );
 			}
 			$tpl = 'Repository/show.html.twig';
@@ -65,19 +75,35 @@ class Repository
 			'tree' => $tree,
 			'lastCommit' => $lastCommit,
 			'readme' => $readme,
+			'shortref' => '',
+			'longref' => $repository->getCurrentBranch(),
+			'ref' => $repository->getCurrentBranch(),
 		] ) );
 	}
 
-	public function showTree( string $repository, string $commitish ): Response
+	#[Route(
+		'/{repo}/tree/{commitish<.*>}',
+		name: 'repository_tree',
+		requirements: [ 'repo' => '%valid_repository_name%' ],
+		defaults: [ 'commitish' => '' ],
+	)]
+	public function showTree( string $repo, ?string $commitish = null ): Response
 	{
-		$repository = $this->index->getRepository( $repository );
+		$repository = $this->index->getRepository( $repo );
+
+		if( $commitish === null )
+		{
+			$commitish = '/';
+		}
 		$tree = $repository->getTree( $commitish );
-		$lastCommit = $repository->getCommit( $tree->getHash() );
+		$lastCommit = $repository->getLastCommitFromPath( $tree->getName(), $tree->getHash() );
 		$readme = $tree->getReadme();
+		$shortref = $lastCommit->getShortHash();
+		$longref = $lastCommit->getHash();
 
 		if( $readme )
 		{
-			$blob = $repository->getBlob( $tree->getHash().'/'.$readme->getName() );
+			$blob = $repository->getBlob( $tree->getHash() . '/' . $readme->getName() );
 			$readme = File::createFromBlob( $blob );
 		}
 
@@ -86,12 +112,20 @@ class Repository
 			'tree' => $tree,
 			'lastCommit' => $lastCommit,
 			'readme' => $readme,
+			'shortref' => $shortref,
+			'longref' => $longref,
+			'ref' => $repository->getCurrentBranch(),
 		] ) );
 	}
 
-	public function listBranches( string $repository ): Response
+	#[Route(
+		'/{repo}/branches',
+		name: 'repository_list_branches',
+		requirements: [ 'repo' => '%valid_repository_name%' ],
+	)]
+	public function listBranches( string $repo ): Response
 	{
-		$repository = $this->index->getRepository( $repository );
+		$repository = $this->index->getRepository( $repo );
 		$branches = $repository->getBranches();
 
 		return new Response( $this->templating->render( 'Repository/branches.html.twig', [
@@ -100,9 +134,14 @@ class Repository
 		] ) );
 	}
 
-	public function listTags( string $repository ): Response
+	#[Route(
+		'/{repo}/tags',
+		name: 'repository_list_tags',
+		requirements: [ 'repo' => '%valid_repository_name%' ],
+	)]
+	public function listTags( string $repo ): Response
 	{
-		$repository = $this->index->getRepository( $repository );
+		$repository = $this->index->getRepository( $repo );
 		$tags = $repository->getTags();
 
 		return new Response( $this->templating->render( 'Repository/tags.html.twig', [
@@ -111,9 +150,14 @@ class Repository
 		] ) );
 	}
 
-	public function archive( string $repository, string $commitish, string $format ): Response
+	#[Route(
+		'/{repo}/archive/{commitish}.{format}',
+		name: 'repository_archive',
+		requirements: [ 'repo' => '%valid_repository_name%', 'commitish' => '%valid_commitish_format%', 'format' => '(zip|tar|tar.gz)' ],
+	)]
+	public function archive( string $repo, string $commitish, string $format ): Response
 	{
-		$repository = $this->index->getRepository( $repository );
+		$repository = $this->index->getRepository( $repo );
 		$archive = $repository->archive( $format, $commitish );
 
 		if( !file_exists( $archive ) )
@@ -121,7 +165,12 @@ class Repository
 			throw new NotFoundHttpException();
 		}
 
-		$response = new Response( file_get_contents( $archive ) );
+		$archivecontent = file_get_contents( $archive );
+		if( !$archivecontent )
+		{
+			$archivecontent = null;
+		}
+		$response = new Response( $archivecontent );
 		$disposition = $response->headers->makeDisposition( ResponseHeaderBag::DISPOSITION_ATTACHMENT, basename( $archive ) );
 		$response->headers->set( 'Content-Disposition', $disposition );
 		$response->headers->set( 'Content-Type', 'application/octet-stream' );

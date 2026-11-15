@@ -10,9 +10,22 @@ interface System
 {
 	public function isValidRepository( Repository $repository ): bool;
 
+	public function isValidBranch( Repository $repository, string $branch ): ?bool;
+
+	public function isValidTag( Repository $repository, string $tag ): bool;
+
+	public function isValidCommitId( Repository $repository, string $hash ): bool;
+
+	/** Resolve a branch, tag, HEAD or commit-ish to a full commit hash. */
+	public function resolveCommitHash( Repository $repository, string $ref, string $type ): string;
+
 	public function getDescription( Repository $repository ): string;
 
 	public function getDefaultBranch( Repository $repository ): string;
+
+	public function getCurrentBranch( Repository $repository ): string;
+
+	public function setCurrentBranch( Repository $repository, string $branch ): bool;
 
 	public function getBranches( Repository $repository ): array;
 
@@ -31,6 +44,8 @@ interface System
 	public function getCommitsFromPath( Repository $repository, string $path, ?string $hash = null, int $page = 1, int $perPage = 10 ): array;
 
 	public function getSpecificCommits( Repository $repository, array $hashes ): array;
+
+	public function getAllCommits( Repository $repository, ?string $hash = null ): array;
 
 	public function getBlame( Repository $repository, string $hash, string $path ): Blame;
 

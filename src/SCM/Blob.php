@@ -40,7 +40,7 @@ class Blob extends Item
 	{
 		$fileName = strtolower( $this->getFileName() );
 
-		return 'readme.md' == $fileName || 'readme.txt' == $fileName;
+		return $fileName == 'readme.md' || $fileName == 'readme.txt';
 	}
 
 	public function getSize(): ?int

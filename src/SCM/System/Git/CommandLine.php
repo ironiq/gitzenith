@@ -44,25 +44,88 @@ class CommandLine implements System
 		$this->path = $path;
 	}
 
+	private function isCommitId( string $candidate ): bool
+	{
+		// Match full 40-char or short 7+ hex SHA
+		return (bool) preg_match( '/^[0-9a-f]{7,64}$/i', $candidate );
+	}
+
 	public function isValidRepository( Repository $repository ): bool
 	{
 		$path = $repository->getPath();
 
-		return file_exists( $path ) && ( file_exists( $path.'/.git/HEAD' ) || file_exists( $path.'/HEAD' ) );
+		return file_exists( $path ) && ( file_exists( $path . '/.git/HEAD' ) || file_exists( $path . '/HEAD' ) );
+	}
+
+	public function isValidBranch( Repository $repository, string $branch = '' ): ?bool
+	{
+		if( $branch === '' )
+		{
+			return false;
+		}
+
+		return (bool) $this->runCheck( ['show-ref', '--verify', '--quiet', 'refs/heads/' . $branch], $repository );
+	}
+
+	public function isValidTag( Repository $repository, string $tag = '' ): bool
+	{
+		if( $tag === '' )
+		{
+			return false;
+		}
+		if( $this->runCheck( ['show-ref', '--verify', '--quiet', 'refs/tags/' . $tag], $repository ) )
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	public function isValidCommitId( Repository $repository, string $hash = '' ): bool
+	{
+		if( $hash === '' )
+		{
+			return false;
+		}
+		if( !$this->isCommitId( $hash ) )
+		{
+			return false;
+		}
+
+		return (bool) $this->runCheck( ['rev-parse', '--verify', $hash . '^{commit}'], $repository );
+	}
+
+	public function resolveCommitHash( Repository $repository, string $ref, string $type ): string
+	{
+		$revision = match( $type )
+		{
+			'branch' => 'refs/heads/' . $ref . '^{commit}',
+			'tag' => 'refs/tags/' . $ref . '^{commit}',
+			default => $ref . '^{commit}',
+		};
+
+		$output = trim( $this->run( [ 'rev-parse', '--verify', '--end-of-options', $revision ], $repository ) );
+
+		if( !preg_match( '/^[0-9a-f]{40,64}$/i', $output ) )
+		{
+			throw new \RuntimeException( sprintf( 'Git did not resolve "%s" to a commit.', $ref ) );
+		}
+
+		return strtolower( $output );
 	}
 
 	public function getDescription( Repository $repository ): string
 	{
 		$path = $repository->getPath();
 
-		if ( file_exists( $path.'/description' ) )
+		if ( file_exists( $path . '/description' ) )
 		{
-			return file_get_contents( $path.'/description' );
+			return file_get_contents( $path . '/description' );
 		}
 
-		if ( file_exists( $path.'/.git/description' ) )
+		if ( file_exists( $path . '/.git/description' ) )
 		{
-			return file_get_contents( $path.'/.git/description' );
+			return file_get_contents( $path . '/.git/description' );
 		}
 
 		return '';
@@ -73,6 +136,32 @@ class CommandLine implements System
 		$branch = $this->run( [ 'symbolic-ref', '--short', 'HEAD' ], $repository );
 
 		return trim( $branch );
+	}
+
+	public function getCurrentBranch( Repository $repository ): string
+	{
+		$output = $this->run( [ 'branch', '--show-current', '--format=%(name)' ], $repository );
+		$branchName = explode( PHP_EOL, $output )[0];
+
+		return $branchName;
+	}
+
+	public function setCurrentBranch( Repository $repository, string $branch ): bool
+	{
+		$branches = [];
+		foreach( $this->getBranches( $repository ) as $b )
+		{
+			$branches[] = $b->getName();
+		}
+
+		$ret = false;
+		if( in_array( $branch, $branches ) )
+		{
+			$output = $this->run( [ 'checkout', $branch ], $repository );
+			$ret = true;
+		}
+
+		return $ret;
 	}
 
 	public function getBranches( Repository $repository ): array
@@ -162,7 +251,7 @@ class CommandLine implements System
 
 	public function getPathTree( Repository $repository, string $path, ?string $hash = 'HEAD' ): Tree
 	{
-		$path = rtrim( $path, '/' ).'/';
+		$path = rtrim( $path, '/' ) . '/';
 		$output = $this->run( [ 'ls-tree', '-lz', $hash, '--', $path ], $repository );
 		$tree = $this->buildTreeFromOutput( $repository, $hash, $output, true );
 		$tree->setName( rtrim( $path, '/' ) );
@@ -192,7 +281,7 @@ class CommandLine implements System
 			'--skip',
 			( $page - 1 ) * $perPage,
 			'--max-count',
-			$page * $perPage,
+			$perPage,
 			self::DEFAULT_COMMIT_FORMAT,
 			$hash,
 		], $repository );
@@ -207,7 +296,7 @@ class CommandLine implements System
 			'--skip',
 			( $page - 1 ) * $perPage,
 			'--max-count',
-			$page * $perPage,
+			$perPage,
 			self::DEFAULT_COMMIT_FORMAT,
 			$hash,
 			'--',
@@ -220,6 +309,17 @@ class CommandLine implements System
 	public function getSpecificCommits( Repository $repository, array $hashes ): array
 	{
 		$output = $this->run( [ ...[ 'show', '-s', self::DEFAULT_COMMIT_FORMAT ], ...$hashes ], $repository );
+
+		return $this->parseCommitsDataXml( $repository, $output );
+	}
+
+	public function getAllCommits( Repository $repository, ?string $hash = 'HEAD' ): array
+	{
+		$output = $this->run( [
+			'log',
+			self::DEFAULT_COMMIT_FORMAT,
+			$hash,
+		], $repository );
 
 		return $this->parseCommitsDataXml( $repository, $output );
 	}
@@ -264,7 +364,7 @@ class CommandLine implements System
 	{
 		$commits = $this->getCommitsFromPath( $repository, $path, $hash, 1, 1 );
 		$commit = reset( $commits );
-		$blobOutput = $this->run( ['show', sprintf( '%s:%s', $hash, $path )], $repository );
+		$blobOutput = $this->run( [ 'show', sprintf( '%s:%s', $hash, $path ) ], $repository );
 
 		$blob = new Blob( $repository, $commit->getHash(), $commit->getShortHash() );
 		$blob->setName( $path );
@@ -280,13 +380,13 @@ class CommandLine implements System
 		if( $criteria->getFrom() )
 		{
 			$command[] = '--after';
-			$command[] = $criteria->getFrom()->format( DateTime::ISO8601 );
+			$command[] = $criteria->getFrom()->format( DateTime::ISO8601_EXPANDED );
 		}
 
 		if( $criteria->getTo() )
 		{
 			$command[] = '--before';
-			$command[] = $criteria->getTo()->format( DateTime::ISO8601 );
+			$command[] = $criteria->getTo()->format( DateTime::ISO8601_EXPANDED );
 		}
 
 		if( $criteria->getAuthor() )
@@ -340,6 +440,30 @@ class CommandLine implements System
 		return $process->getOutput();
 	}
 
+	protected function runCheck( array $command, ?Repository $repository = null ): bool
+	{
+		array_unshift( $command, $this->path );
+
+		$process = new Process( $command );
+		$process->setTimeout( self::DEFAULT_TIMEOUT );
+
+		if( $repository )
+		{
+			$process->setWorkingDirectory( $repository->getPath() );
+		}
+
+		try
+		{
+			$process->mustRun();
+		}
+		catch( ProcessFailedException $exception )
+		{
+			return false;
+		}
+
+		return (bool) $process->isSuccessful();
+	}
+
 	protected function buildTreeFromOutput( Repository $repository, string $hash, string $output, bool $fetchCommitInfo = false ): Tree
 	{
 		$lines = explode( "\0", $output );
@@ -354,13 +478,13 @@ class CommandLine implements System
 
 			$file = preg_split( '/[\s]+/', $line, 5 );
 
-			if( 'commit' == $file[1] )
+			if( $file[1] == 'commit' )
 			{
 				// Don't handle submodules yet
 				continue;
 			}
 
-			if( '120000' == $file[0] )
+			if( $file[0] == '120000' )
 			{
 				$symlinkTarget = $this->run( ['show', $file[2]], $repository );
 				$symlink = new Symlink( $repository, $file[2] );
@@ -373,7 +497,7 @@ class CommandLine implements System
 				continue;
 			}
 
-			if( 'blob' == $file[1] )
+			if( $file[1] == 'blob' )
 			{
 				$blob = new Blob( $repository, $file[2] );
 				$blob->setMode( $file[0] );
@@ -419,7 +543,7 @@ class CommandLine implements System
 		return $root;
 	}
 
-	protected function getLatestCommitFromPath( Repository $repository, string $path, string $hash ): Commit
+	public function getLatestCommitFromPath( Repository $repository, string $path, string $hash ): Commit
 	{
 		$output = $this->run( [ 'log', '-n', 1, self::DEFAULT_COMMIT_FORMAT, $hash, '--', $path ], $repository );
 		$commits = $this->parseCommitDataXml( $repository, $output );
@@ -431,7 +555,7 @@ class CommandLine implements System
 	{
 		$xmlStart = strpos( $input, '<item>' );
 
-		if( false === $xmlStart )
+		if( $xmlStart === false )
 		{
 			throw new InvalidCommitException( $input );
 		}
@@ -444,7 +568,7 @@ class CommandLine implements System
 
 	protected function parseCommitsDataXml( Repository $repository, string $input ): array
 	{
-		$items = new SimpleXMLElement( '<items>'.$input.'</items>' );
+		$items = new SimpleXMLElement( '<items>' . $input . '</items>' );
 		$commits = [];
 
 		foreach( $items as $item )
@@ -467,11 +591,11 @@ class CommandLine implements System
 			$commit->setCommitedAt( new CarbonImmutable( (string) $item->commiter_date ) );
 
 			$signatureStatus = (string) $item->valid_signature;
-			if( 'N' != $signatureStatus )
+			if( $signatureStatus != 'N' )
 			{
 				$signature = new Signature( (string) $item->signer, (string) $item->signer_key );
 
-				if( 'B' == $signatureStatus )
+				if( $signatureStatus == 'B' )
 				{
 					$signature->validate();
 				}

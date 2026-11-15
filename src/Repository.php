@@ -22,6 +22,16 @@ class Repository
 	{
 	}
 
+	public function getRepository(): SourceRepository
+	{
+		return $this->repository;
+	}
+
+	public function resolveCommitHash( string $ref, string $type ): string
+	{
+		return $this->system->resolveCommitHash( $this->repository, $ref, $type );
+	}
+
 	public function getName(): string
 	{
 		return $this->name;
@@ -37,6 +47,16 @@ class Repository
 		return $this->system->getDefaultBranch( $this->repository );
 	}
 
+	public function getCurrentBranch(): string
+	{
+		return $this->system->getCurrentBranch( $this->repository );
+	}
+
+	public function setCurrentBranch( $branch ): bool
+	{
+		return $this->system->setCurrentBranch( $this->repository, $branch );
+	}
+
 	public function getBranches(): array
 	{
 		return $this->system->getBranches( $this->repository );
@@ -47,21 +67,24 @@ class Repository
 		return $this->system->getTags( $this->repository );
 	}
 
-	public function getTree( ?string $commitish = null ): Tree
+	public function getTree( ?string $commitish = null ): Tree|Commitish
 	{
-		if( !$commitish )
+		if( $commitish === null )
 		{
 			return $this->system->getTree( $this->repository );
 		}
+		$obj = new Commitish( $this, $commitish );
 
-		$commitish = new Commitish( $this, $commitish );
-
-		if( $commitish->hasPath() )
+		if( $obj->hasPath() )
 		{
-			return $this->system->getPathTree( $this->repository, $commitish->getPath(), $commitish->getHash() );
+			$ret = $this->system->getPathTree( $this->repository, $obj->getPath(), $obj->getHash() );
+		}
+		else
+		{
+			$ret = $this->system->getTree( $this->repository, $obj->getHash() );
 		}
 
-		return $this->system->getTree( $this->repository, $commitish->getHash() );
+		return $ret;
 	}
 
 	public function getCommit( ?string $commitish = null ): Commit
@@ -71,16 +94,38 @@ class Repository
 			return $this->system->getCommit( $this->repository );
 		}
 
-		$commitish = new Commitish( $this, $commitish );
+		$obj = new Commitish( $this, $commitish );
 
-		return $this->system->getCommit( $this->repository, $commitish->getHash() );
+		return $this->system->getCommit( $this->repository, $obj->getHash() );
+	}
+
+	public function getLastCommit( ?string $commitish = null ): Commit
+	{
+		$commits = $this->getCommits( $commitish, 1, 1 );
+		$key = array_keys( $commits )[0];
+
+		return $commits[$key];
+	}
+
+	public function getLastCommitFromPath( $path, $hash = 'HEAD' ): Commit
+	{
+		$commit = array_values( $this->getCommitsFromPath( $path, $hash, 1, 1 ) )[0];
+
+		return $commit;
+	}
+
+	public function getCommitsFromPath( string $path, ?string $hash = 'HEAD', int $page = 1, int $perPage = 10 ): array
+	{
+		$commits = $this->system->getCommitsFromPath( $this->repository, $path, $hash, $page, $perPage );
+
+		return $commits;
 	}
 
 	public function getCommits( ?string $commitish, int $page, int $perPage ): array
 	{
-		if( !$commitish )
+		if( $commitish == null )
 		{
-			return $this->system->getCommits( $this->repository, null, $page, $perPage );
+			return $this->system->getCommits( $this->repository, 'HEAD', $page, $perPage );
 		}
 
 		$commitish = new Commitish( $this, $commitish );
@@ -98,6 +143,11 @@ class Repository
 		return $this->system->getSpecificCommits( $this->repository, $hashes );
 	}
 
+	public function getAllCommits( ?string $commitish = null ): array
+	{
+		return $this->system->getAllCommits( $this->repository );
+	}
+
 	public function getBlame( string $commitish ): Blame
 	{
 		$commitish = new Commitish( $this, $commitish );
@@ -108,7 +158,7 @@ class Repository
 		$lineAccumulator = '';
 		foreach( $annotatedLines as $index => $currentLine )
 		{
-			$lineAccumulator .= $currentLine->getContents().PHP_EOL;
+			$lineAccumulator .= $currentLine->getContents() . PHP_EOL;
 			$nextLine = $annotatedLines[$index + 1] ?? null;
 
 			if( $nextLine && $currentLine->getCommit() != $nextLine->getCommit() )
@@ -124,6 +174,7 @@ class Repository
 	public function getBlob( string $commitish ): Blob
 	{
 		$commitish = new Commitish( $this, $commitish );
+		// dd( $commitish );
 
 		try
 		{
@@ -157,5 +208,20 @@ class Repository
 		$commitish = new Commitish( $this, $commitish );
 
 		return $this->system->archive( $this->repository, $format, $commitish->getHash(), $commitish->getPath() ?? '.' );
+	}
+
+	public function isValidBranch( string $branch ): bool
+	{
+		return (bool) $this->system->isValidBranch( $this->repository, $branch );
+	}
+
+	public function isValidGitTag( string $tag ): bool
+	{
+		return (bool) $this->system->isValidTag( $this->repository, $tag );
+	}
+
+	public function isValidCommitId( string $commitid ): bool
+	{
+		return (bool) $this->system->isValidCommitId( $this->repository, $commitid );
 	}
 }

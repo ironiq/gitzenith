@@ -6,8 +6,7 @@ DOCKER_COMPOSE ?= docker compose
 EXEC_DOCKER ?= $(DOCKER_COMPOSE) exec
 EXEC_DOCKER_NOTTY ?= $(EXEC_DOCKER) -T
 EXEC_PHP ?= $(EXEC_DOCKER_NOTTY) php-fpm
-EXEC_NODE ?= $(EXEC_DOCKER_NOTTY) node
-EXEC_WEB ?= $(EXEC_DOCKER_NOTTY) web
+EXEC_WEB ?= $(EXEC_DOCKER_NOTTY) webserver
 
 help: # Display the application manual
 	@echo "$(NAME) version \033[33m$(VERSION)\n\e[0m"
@@ -18,10 +17,10 @@ help: # Display the application manual
 
 check-deps:
 	@if ! [ -x "$$(command -v docker)" ]; then\
-	  echo '\n\033[0;31mdocker is not installed.';\
-	  exit 1;\
+		echo '\n\033[0;31mdocker is not installed.';\
+		exit 1;\
 	else\
-	  echo "\033[0;32mdocker installed\033[0m";\
+		echo "\033[0;32mdocker installed\033[0m";\
 	fi
 
 setup: check-deps # Setup dependencies and development configuration
@@ -43,24 +42,17 @@ clean: # Cleanup containers and build artifacts
 bash-php: # Start a bash session in the PHP container
 	$(EXEC_DOCKER) php-fpm /bin/bash
 
-bash-node: # Start a bash session in the PHP container
-	$(EXEC_DOCKER) node /bin/sh
+bash-web: # Start a bash session in the PHP container
+	$(EXEC_DOCKER) webserver /bin/sh
 
 test: # Run automated test suite
 	$(EXEC_PHP) composer test
-	$(EXEC_NODE) npm run test
-
-acceptance: # Run acceptance test suite
-	$(EXEC_NODE) npm run cypress
 
 show-app: # Open application in your browser
 	xdg-open http://$$(docker compose port webserver 80)/
 
 update-php: # Update dependencies
 	$(EXEC_PHP) composer update
-
-update-node: # Update dependencies
-	$(EXEC_NODE) npm update
 
 format: # Run code style autoformatter
 	$(EXEC_PHP) composer format
@@ -69,7 +61,6 @@ build: # Build application package
 	@rm -rf vendor/
 	@rm -rf public/assets/*
 	@composer install --ignore-platform-reqs --no-dev --no-scripts -o
-	@npm run build
 	@zip ./build.zip \
 	-r . \
 	-x '.cache/*' \
@@ -82,7 +73,10 @@ build: # Build application package
 	-x 'config/dev/*' \
 	-x 'docker/*' \
 	-x 'docs/*' \
+<<<<<<< HEAD
 	-x 'node_modules/*' \
+=======
+>>>>>>> devel
 	-x 'tests/*' \
 	-x 'tmp/*' \
 	-x 'var/cache/*' \
@@ -95,18 +89,18 @@ build: # Build application package
 	-x '.php-cs-fixer.php' \
 	-x '.phpactor.json' \
 	-x '.phpunit.result.cache' \
-	-x '.prettierrc' \
 	-x 'composer.json' \
 	-x 'composer.lock' \
 	-x 'crowdin.yml' \
+<<<<<<< HEAD
 	-x 'cypress.config.js' \
 	-x 'cypress.yml' \
 	-x 'cypress.json' \
+=======
+>>>>>>> devel
 	-x 'docker-compose.override.yml*' \
 	-x 'docker-compose.yml' \
 	-x 'Makefile' \
-	-x 'package-lock.json' \
-	-x 'package.json' \
 	-x 'phpstan.neon' \
 	-x 'phpunit.xml.dist' \
 	-x 'postcss.config.js' \

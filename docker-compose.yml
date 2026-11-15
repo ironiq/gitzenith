@@ -1,12 +1,7 @@
-services:
-  node:
-    image: node:22-alpine
-    working_dir: /application
-    volumes:
-      - .:/application
-    command: /application/bin/watcher.sh
-    # command: npm install && npm run watch
+volumes:
+  var-cache-volume:
 
+services:
   webserver:
     build:
       context: docker/nginx/
@@ -14,11 +9,18 @@ services:
       - php-fpm
     working_dir: /application
     volumes:
-      - .:/application
+      - .:/application:cached
+    ports:
+      - '8880:80'
 
   php-fpm:
     build:
       context: docker/php-fpm/
     working_dir: /application
     volumes:
-      - .:/application
+      - .:/application:cached
+      - var-cache-volume:/application/var/cache
+      - $HOME/.composer:/root/.composer/:cached
+      - /tmp:/var/repositories
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

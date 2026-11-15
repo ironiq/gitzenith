@@ -9,6 +9,7 @@ use GitZenith\SCM\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\Routing\Annotation\Route;
 use Twig\Environment;
 
 class Blob
@@ -17,12 +18,45 @@ class Blob
 	{
 	}
 
-	public function show( string $repository, string $commitish ): Response
+	#[Route(
+		'/{repo}/blob/{commitish}',
+		name: 'blob_show',
+		requirements: [ 'repo' => '%valid_repository_name%', 'commitish' => '%valid_commitish_format%' ],
+	)]
+	public function show( string $repo, string $commitish ): Response
 	{
-		$repository = $this->index->getRepository( $repository );
+		$arr = explode( '/', $commitish );
+		$commitid = $arr[0];
+
+		$repository = $this->index->getRepository( $repo );
+		$curbranch = $repository->getCurrentBranch();
+
+		$branches = [];
+		foreach( $repository->getBranches() as $b )
+		{
+			$branches[] = $b->getName();
+		}
+		if( in_array( $commitid, $branches ) && $commitid !== $curbranch )
+		{
+			$repository->setCurrentBranch( $repository, $commitid );
+			$curbranch = $repository->getCurrentBranch();
+		}
+
+		$origcommit = $this->index->getSystem( $repository->getRepository() )->getCommit( $repository->getRepository(), $commitid );
 		$blob = $repository->getBlob( $commitish );
 		$commit = $repository->getCommit( $blob->getHash() );
 		$file = File::createFromBlob( $blob );
+
+		if( $commitid === 'HEAD' || $commitid === $curbranch )
+		{
+			$shortref = $curbranch;
+			$longref = $shortref;
+		}
+		else
+		{
+			$shortref = $origcommit->getShortHash();
+			$longref = $origcommit->getHash();
+		}
 
 		if( $file->isBinary() )
 		{
@@ -39,12 +73,20 @@ class Blob
 			'commit' => $commit,
 			'blob' => $blob,
 			'file' => $file,
+			'shortref' => $shortref,
+			'longref' => $longref,
+			'ref' => $repository->getCurrentBranch(),
 		] ) );
 	}
 
-	public function showRaw( string $repository, string $commitish ): Response
+	#[Route(
+		'/{repo}/raw/{commitish}',
+		name: 'blob_raw',
+		requirements: [ 'repo' => '%valid_repository_name%', 'commitish' => '%valid_commitish_format%' ],
+	)]
+	public function showRaw( string $repo, string $commitish ): Response
 	{
-		$repository = $this->index->getRepository( $repository );
+		$repository = $this->index->getRepository( $repo );
 		$blob = $repository->getBlob( $commitish );
 		$file = File::createFromBlob( $blob );
 
@@ -60,9 +102,14 @@ class Blob
 		return $response;
 	}
 
-	public function blame( string $repository, string $commitish ): Response
+	#[Route(
+		'/{repo}/blame/{commitish}',
+		name: 'blob_blame',
+		requirements: [ 'repo' => '%valid_repository_name%', 'commitish' => '%valid_commitish_format%' ],
+	)]
+	public function blame( string $repo, string $commitish ): Response
 	{
-		$repository = $this->index->getRepository( $repository );
+		$repository = $this->index->getRepository( $repo );
 		$blob = $repository->getBlob( $commitish );
 		$blame = $repository->getBlame( $commitish );
 
@@ -70,15 +117,23 @@ class Blob
 			'repository' => $repository,
 			'blame' => $blame,
 			'blob' => $blob,
+			'shortref' => $blob->getShortHash(),
+			'longref' => $blob->getHash(),
+			'ref' => $repository->getCurrentBranch(),
 		] ) );
 	}
 
-	public function showHistory( Request $request, string $repository, string $commitish ): Response
+	#[Route(
+		'/{repo}/history/{commitish}',
+		name: 'blob_history',
+		requirements: [ 'repo' => '%valid_repository_name%', 'commitish' => '%valid_commitish_format%' ],
+	)]
+	public function showHistory( Request $request, string $repo, string $commitish ): Response
 	{
 		$page = (int) $request->query->get( 'page', 1 );
 		$perPage = (int) $request->query->get( 'perPage', $this->perPage );
 
-		$repository = $this->index->getRepository( $repository );
+		$repository = $this->index->getRepository( $repo );
 		$blob = $repository->getBlob( $commitish );
 		$commits = $repository->getCommits( $commitish, $page, $perPage );
 		$commitGroups = [];
@@ -97,6 +152,9 @@ class Blob
 			'nextPage' => $page + 1,
 			'previousPage' => $page - 1,
 			'perPage' => $perPage,
+			'shortref' => '',
+			'longref' => '',
+			'ref' => $repository->getCurrentBranch(),
 		] ) );
 	}
 }
