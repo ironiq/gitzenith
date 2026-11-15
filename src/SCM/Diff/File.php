@@ -8,6 +8,7 @@ class File
 {
 	public const TYPE_NEW = 'new';
 	public const TYPE_DELETED = 'deleted';
+	public const TYPE_RENAMED = 'renamed';
 	public const TYPE_NO_CHANGE = 'no_change';
 	protected string $type = self::TYPE_NO_CHANGE;
 	protected ?string $index = null;
@@ -28,6 +29,11 @@ class File
 	public function getName(): string
 	{
 		return $this->name;
+	}
+
+	public function setName( string $name ): void
+	{
+		$this->name = $name;
 	}
 
 	public function getType(): string
